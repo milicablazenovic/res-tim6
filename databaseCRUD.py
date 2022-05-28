@@ -6,3 +6,4 @@ def readUsers():
 
     for item in cursor:
         print(item)
+
