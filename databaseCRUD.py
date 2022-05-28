@@ -7,3 +7,14 @@ def readUsers():
     for item in cursor:
         print(item)
 
+def deleteUser():
+    print("Unesite id brojila za brisanje:")
+    idZaBrisanje = input()
+    if(len(idZaBrisanje)==0):
+        print("Morate uneti id")
+    else:
+        cursor = connection.cursor()
+        cursor.execute("delete from brojilo where idbrojila=idZaBrisanje")
+
+    connection.commit()
+
