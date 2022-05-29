@@ -43,7 +43,7 @@ def createUser():
     brojilo = Brojilo()
     brojilo.createUser()
     
-def update_user():
+def updateUser():
     id_update = input("Unesite id brojila koji zelite da izmenite: ")
     
     if(len(id_update)==0):
