@@ -1,4 +1,6 @@
 import cx_Oracle
+from Brojilo import Brojilo
+
 connection = cx_Oracle.connect("baza_res", "res", "localhost/xe")
 def readUsers():
     cursor = connection.cursor()
@@ -18,4 +20,6 @@ def deleteUser():
 
     connection.commit()
 
-
+def createUser():
+    brojilo = Brojilo()
+    brojilo.createUser()
