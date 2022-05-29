@@ -14,7 +14,8 @@ def deleteUser():
         print("Morate uneti id")
     else:
         cursor = connection.cursor()
-        cursor.execute("delete from brojilo where idbrojila=idZaBrisanje")
+        cursor.execute("delete from brojilo where idbrojila="+str(idZaBrisanje))
 
     connection.commit()
+
 
