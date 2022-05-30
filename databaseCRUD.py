@@ -23,7 +23,7 @@ def db_disconnect():
 
 def readUsers():
     cursor = connection.cursor()
-    cursor.execute("select * from brojilo")
+    cursor.execute("select * from brojilo order by idbrojila")
 
     for item in cursor:
         print(item)
