@@ -1,5 +1,5 @@
 import cx_Oracle
-from Brojilo import Brojilo
+from database.Brojilo import Brojilo
 
 def db_connect(username='', password='', dsn=''):
     """Konekcija sa Oracle bazom.

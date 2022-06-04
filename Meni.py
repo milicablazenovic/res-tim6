@@ -1,4 +1,4 @@
-import databaseCRUD 
+import database.databaseCRUD as databaseCRUD 
 
 global case
 case=10       
