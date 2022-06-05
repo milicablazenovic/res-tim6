@@ -1,5 +1,5 @@
 import socket
-import random
+from random import randint
 from datetime import datetime
 
 class Writer:
@@ -11,7 +11,7 @@ class Writer:
     def start(self):    
         #pokusaj konekcije sa load balancerom  
         try:
-            self.socket.connect(self.host, self.port)
+            self.socket.connect((self.host, self.port))
             print('Uspesna konekcija.\n')
             
             while True:
@@ -33,7 +33,7 @@ class Writer:
                     print('Unesite broj izmedju 1-4.\n')
                 
                 #provera da li je uspesno sakupljen podatak za slanje    
-                if not send_data:
+                if send_data:
                     self.socket.sendall(send_data.encode())
                                         
                     server_response = self.socket.recv(1024)
@@ -58,12 +58,14 @@ class Writer:
         Returns:
             string: Podatak za slanje u vidu stringa 'vreme - id_brojila : trenutna_vrednost'
         """
-        id = random.randint(0, 100)
-        current_value = random.randint(0, 10000)
+
+        id = randint(0, 100)
+        value = randint(0, 10000)
         dt = datetime.now()
         time_stamp = dt.strftime('%X %x')
         
-        return time_stamp + ' - '  + str(id) + ' : ' + str(current_value)
+        return time_stamp + ' - ' + str(id) + ' : ' + str(value)
+
     
     def data_input(self):
         """Manuelno slanje podataka o trenutnim vrednostiam brojila.
@@ -72,19 +74,20 @@ class Writer:
             string: Podatak za slanje u vidu stringa 'vreme - id_brojila : trenutna_vrednost'
         """
         try:
-            print("Unesite ID brojila: ")
+            print("Unesite id brojila: ")
             id = int(input())
             print("Unesite vrednost: ")
-            current_value = int(input())
+            value = int(input())
             dt = datetime.now()
             time_stamp = dt.strftime('%X %x')
-            
-            return time_stamp + ' - '  + str(id) + ' : ' + str(current_value)
+
+            return time_stamp + ' - ' + str(id) + ' : ' + str(value)
         except ValueError:
-            print("Greska. Vrednosti moraju biti ceo broj.")
+            print("Greska! Vrednosti moraju biti ceo broj.")
             return ""
         except:
-            print("Greska.")
+            print("Greska!")
             return ""
+
         
         
