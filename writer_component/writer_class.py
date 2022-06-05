@@ -15,8 +15,11 @@ class Writer:
             print('Uspesna konekcija.\n')
             
             while True:
-                print('Izaberite opciju"\n1. Automatsko slanje podataka\n2. Manuelno slanje podataka\n'
-                      +'3. Paljenje\Gasenje workera\n4. Prekid konekcije') 
+                print('Izaberite opciju\n'
+                      + '1. Automatsko slanje podataka\n' 
+                      + '2. Manuelno slanje podataka\n'
+                      + '3. Paljenje\Gasenje workera\n'
+                      + '4. Prekid konekcije') 
                 case = int(input())
                 send_data = ''
                 
