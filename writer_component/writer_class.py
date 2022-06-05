@@ -41,7 +41,7 @@ class Writer:
                     else:
                         break  #ako nema odgovora od servera zatvara se konekcija
                 else:
-                    print('Poruka nije poslata.\n')
+                    print('Poruka nije poslata. Pokusajte ponovo.\n')
                     
         except socket.error as e:
             print('Greska u komunikaciji sa load balancerom. ' + str(e))
