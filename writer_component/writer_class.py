@@ -28,7 +28,7 @@ class Writer:
                 elif case == 2:
                     send_data = self.data_input()   
                 elif case == 4:
-                       break
+                    send_data = 'end' # saljem 'end' load balanceru da bi on znao da necu vise da pricam s njim
                 else:
                     print('Unesite broj izmedju 1-4.\n')
                 
@@ -40,7 +40,6 @@ class Writer:
                     
                     if server_response:
                         print(server_response.decode())
-                       
                     else:
                         break  #ako nema odgovora od servera zatvara se konekcija
                 else:
