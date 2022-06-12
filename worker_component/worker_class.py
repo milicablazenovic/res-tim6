@@ -20,7 +20,7 @@ class Worker:
             while True:
                 #TODO
                 #prihvatamo podatke od lb
-                pass                            
+                self.recieve_data()                          
         except socket.error as e:
             print('Greska u komunikaciji sa load balancerom. ' + str(e))
         finally:
@@ -29,6 +29,8 @@ class Worker:
 
     def recieve_data(self):
         # TODO: preuzimanje podataka od Load balancera
+        response = self.lb_socket.recv(1024).decode()
+        self.save_data(response)
         pass
 
     def save_data(self, data):
