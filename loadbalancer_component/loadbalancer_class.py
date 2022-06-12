@@ -3,6 +3,7 @@ from re import I, T
 from select import select
 import socket                                         
 import time
+import os
 from _thread import *
 
 class LoadBalancer:
@@ -20,6 +21,19 @@ class LoadBalancer:
                 # ukoliko je taj podatak 'end' -> prekidam konekciju i sa strane load balancera
                 if (data == 'end'):
                     break
+                # ukoliko je izabrano paljenje/gasenje workera load balancer salje writeru listu upaljenih workera
+                if(data.lower() == 'off'):
+                    try:
+                        f = open("worker_list.txt", 'r')
+                        worker_list = f.readlines() #lista upaljenih workera 
+                        writersocket.send(worker_list.encode())
+                        #worker_on = writersocket.recv(1024).decode()
+                        pass
+                    finally:
+                        f.close()
+                elif(data.lower() == 'on'):
+                    #todo
+                    pass
 
                 writersocket.send('Uspesno poslata poruka na server.'.encode())
 

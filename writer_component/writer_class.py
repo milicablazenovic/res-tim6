@@ -26,7 +26,20 @@ class Writer:
                 if case == 1:
                     send_data = self.data_auto()
                 elif case == 2:
-                    send_data = self.data_input()   
+                    send_data = self.data_input()  
+                elif case == 3:
+                    print('1. Gasenje workera\n'
+                          + '2. Paljenje workera\n') 
+                    on_off = int(input())
+                    if(on_off != 1 or on_off != 2):
+                        print('Greska. POkisajte ponovo.\n')
+                        continue
+                    elif on_off == 1:
+                        send_data = 'off'
+                        response = self.send(send_data)
+                    else:
+                        send_data = 'on'  
+                        response = self.send(send_data)                                                                     
                 elif case == 4:
                     send_data = 'end' # saljem 'end' load balanceru da bi on znao da necu vise da pricam s njim
                 else:
@@ -34,14 +47,11 @@ class Writer:
                 
                 #provera da li je uspesno sakupljen podatak za slanje    
                 if send_data:
-                    self.socket.sendall(send_data.encode())
-                                        
-                    server_response = self.socket.recv(1024)
+                    response = self.send(send_data)
+                    if response == 'Nema odgovora':
+                        break
                     
-                    if server_response:
-                        print(server_response.decode())
-                    else:
-                        break  #ako nema odgovora od servera zatvara se konekcija
+                    print(response)                    
                 else:
                     print('Poruka nije poslata. Pokusajte ponovo.\n')
                     
@@ -50,6 +60,24 @@ class Writer:
         finally:
             self.socket.close()
             print('Zavrsena konekcija.\n') 
+            
+    def send(self, data):
+        """Metoda za slanje podataka serveru 
+
+        Args:
+            data (string): podatak za slanje
+
+        Returns:
+            string: odgovor servera
+        """
+        self.socket.sendall(data.encode())
+                                        
+        server_response = self.socket.recv(1024)
+                    
+        if server_response:
+            return server_response.decode()
+        else:
+            return 'Nema odgovora' #ako nema odgovora od servera zatvara se konekcija
             
     def data_auto(self):
         """Automatsko slanje podataka o trenutim vrednostima brojila.

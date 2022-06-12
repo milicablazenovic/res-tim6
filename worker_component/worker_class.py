@@ -1,17 +1,31 @@
 from random import randint
 import sys
+import socket
 sys.path.append('../')
 import database.databaseCRUD as databaseCRUD
 import database.months as months
 
 
 class Worker:
-    def __init__(self):
-        pass
+    def __init__(self, lb_host, lb_port):
+        self.lb_host = lb_host
+        self.lb_port = lb_port 
+        self.lb_socket = socket.socket(socket.AF_INET, socket.SOCK)
 
     def start(self):
-        # TODO: uspostavljanje komunikacije sa Load balancerom
-        pass
+        #pokusaj konekcije sa load balancerom  
+        try:
+            self.lb_socket.connect((self.lb_host, self.lb_port))
+            print('Uspesna konekcija.\n')
+            while True:
+                #TODO
+                #prihvatamo podatke od lb
+                pass                            
+        except socket.error as e:
+            print('Greska u komunikaciji sa load balancerom. ' + str(e))
+        finally:
+            self.socket.close()
+            print('Zavrsena konekcija.\n') 
 
     def recieve_data(self):
         # TODO: preuzimanje podataka od Load balancera
