@@ -1,7 +1,10 @@
+import json
+import pickle
 from pkgutil import get_data
 from re import I, T
 from select import select
-import socket                                         
+import socket
+import sys                                         
 import time
 from _thread import *
 
@@ -112,9 +115,14 @@ class LoadBalancer:
         fout = open('buffer.txt', 'w')
         fout.writelines(data[10:])
 
-    # TODO: prosledjuje prikupljene vrednosti prvom slobodnom Workeru
     def forward_data(self, dictionary):
         print("Vrednosti koje ce se slati prvom slobodnom workeru:")
         for key, value in dictionary.items():
             print(key, ' : ', value)
-        pass
+
+        # salje vrednost workeru (TODO: proveriti koji je slobodan)
+        try:
+            json_object = json.dumps(dictionary).encode('utf-8')
+            self.socket.sendall(json_object)
+        except:
+            print("Greska!!! Nije provereno koji Worker je slobodan pre slanja (i mozda generalno ne salje dobro)!")
