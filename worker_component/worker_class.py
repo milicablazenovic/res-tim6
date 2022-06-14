@@ -34,7 +34,6 @@ class Worker:
         pass
 
     def save_data(self, data):
-        # TODO: cuvanje podataka u bazu vodeci racuna da se ne upise u isti red 
         # podaci koje dolaze su oblika id  :  vrednost
         count = 0
         month = 0
@@ -59,10 +58,10 @@ class Worker:
             if month == 12:
                 return
             else:
-                nextMonth = months.Months(month + 1).name
+                nextMonth = month + 1
                 
                 query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
-                        values ('{str(id)}', '{str(value)}', '{nextMonth}')"""
+                        values ('{str(id)}', '{str(value)}', '{str(nextMonth)}')"""
                 cursor.execute(query)
                 databaseCRUD.connection.commit()
                 print("Uspesno upisana vrednost.")
