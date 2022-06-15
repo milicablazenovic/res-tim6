@@ -27,7 +27,7 @@ class LoadBalancer:
                 # ukoliko je izabrano paljenje/gasenje workera load balancer salje writeru listu upaljenih workera
                 if(data.lower() == 'off'):
                     try:
-                        f = open("worker_list.txt", 'r')
+                        f = open("worker_list.txt", 'a+')
                         worker_list = f.readlines() #lista upaljenih workera 
                         writersocket.send(worker_list.encode())
                         #worker_on = writersocket.recv(1024).decode()

@@ -1,6 +1,7 @@
 import socket
 from random import randint
 from datetime import datetime
+from threading import Thread
 
 class Writer:
     def __init__(self, host, port):
@@ -32,7 +33,7 @@ class Writer:
                           + '2. Paljenje workera\n') 
                     on_off = int(input())
                     if(on_off != 1 or on_off != 2):
-                        print('Greska. POkisajte ponovo.\n')
+                        print('Greska. Pokusajte ponovo.\n')
                         continue
                     elif on_off == 1:
                         send_data = 'off'
@@ -70,6 +71,7 @@ class Writer:
         Returns:
             string: odgovor servera
         """
+        Thread.sleep(3000)
         self.socket.sendall(data.encode())
                                         
         server_response = self.socket.recv(1024)
