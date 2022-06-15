@@ -34,35 +34,35 @@ class Worker:
         pass
 
     def save_data(self, data):
-        # podaci koje dolaze su oblika id  :  vrednost
-        count = 0
-        month = 0
-        data = data.split(" ")
-        id = data[0]
-        value = data[::-1][0]
+        # podaci koje dolaze su dictionary
+        
         databaseCRUD.db_connect("baza_res", "res", "localhost/xe")
         cursor = databaseCRUD.connection.cursor()
 
-        # provera da li prosledjeni id postoji
-        cursor.execute("select * from brojilo where idbrojila="+ str(id))
-        for item in cursor:
-            count +=1 
-        if count == 0:
-            return # necemo upisati taj podatak
-        else:
-            # provera koji je sledeci mesec za koji se upisuje vrednost
-            cursor.execute("select * from potrosnja where idbrojila="+ str(id))
+        for key, value in data.items():
+            # key je id, a value vrednost
+            count = 0
+            month = 0
+            # provera da li prosledjeni id postoji
+            cursor.execute("select * from brojilo where idbrojila="+ str(key))
             for item in cursor:
-                month += 1
-
-            if month == 12:
-                return
+                count +=1 
+            if count == 0:
+                return # necemo upisati taj podatak
             else:
-                nextMonth = month + 1
-                
-                query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
-                        values ('{str(id)}', '{str(value)}', '{str(nextMonth)}')"""
-                cursor.execute(query)
-                databaseCRUD.connection.commit()
-                print("Uspesno upisana vrednost.")
+                # provera koji je sledeci mesec za koji se upisuje vrednost
+                cursor.execute("select * from potrosnja where idbrojila="+ str(key))
+                for item in cursor:
+                    month += 1
+
+                if month == 12:
+                    return
+                else:
+                    nextMonth = month + 1
+                    
+                    query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
+                            values ('{str(key)}', '{str(value)}', '{str(nextMonth)}')"""
+                    cursor.execute(query)
+                    databaseCRUD.connection.commit()
+                    print("Uspesno upisana vrednost.")
         
