@@ -21,6 +21,30 @@ def db_disconnect():
         connection.close()
         print("Zavrsena konekcija.")
 
+
+def create_table():
+    cursor = connection.cursor()
+    try:
+        query = f"""create table brojilo(
+        idbrojila integer not null,
+        ime varchar(20) not null,
+        prezime varchar(25) not null,
+        ulica varchar(25) not null,
+        broj integer not null,
+        postbroj integer not null,
+        grad varchar(20) not null,
+        constraint brojilo_PK primary key (idbrojila))"""
+        cursor.execute(query)
+
+        query = f"""create table potrosnja(
+        idbrojila integer not null references brojilo,
+        potrosnja decimal(10,2) not null,
+        mesec integer not null)"""
+        cursor.execute(query)
+        
+    except cx_Oracle.DatabaseError as er:
+        print("Greska. Pokusavate da kreirate tabelu sa imenom koje vec postoji.")
+
 def readUsers():
     cursor = connection.cursor()
     cursor.execute("select * from brojilo order by idbrojila")
@@ -93,7 +117,7 @@ def updateUser():
             elif case == 5:
                 data_update = input("Unesite novi postanski broj:\n")
                 cursor = connection.cursor()
-                cursor.execute("UPDATE brojilo SET postanski_broj = "
+                cursor.execute("UPDATE brojilo SET postbroj = "
                             + data_update + " WHERE idbrojila = " + id_update)
                 connection.commit()
             elif case == 6:
@@ -103,6 +127,6 @@ def updateUser():
                             + data_update + "' WHERE idbrojila = " + id_update)
                 connection.commit()
             else:
-                print("Molim Vas izaberite obcije 1-6.\n")
+                print("Molim Vas izaberite opcije 1-6.\n")
         
         print("Izasli ste iz menija za izmenu.\n")

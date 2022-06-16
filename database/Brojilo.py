@@ -48,7 +48,7 @@ class Brojilo:
             return
 
         cursor = connection.cursor()
-        cursor.execute("insert into brojilo (ime, prezime, ulica, broj, postanski_broj, grad)" + 
+        cursor.execute("insert into brojilo (ime, prezime, ulica, broj, postbroj, grad)" + 
         " values ('" + self.ime + "','" + self.prezime + "','" + self.ulica + "','" + self.broj + "','" + self.postanski_broj + "','" + self.grad + "')")
 
         connection.commit()
