@@ -13,6 +13,7 @@ def db_connect(username='', password='', dsn=''):
         global connection 
         connection = cx_Oracle.connect(username, password, dsn)
         print("Konektovali ste se na bazu")
+        return connection
     except cx_Oracle.DatabaseError as er:
         print('Postoji greska sa Oracle bazom:', er)
         
@@ -41,6 +42,7 @@ def create_table():
         potrosnja decimal(10,2) not null,
         mesec integer not null)"""
         cursor.execute(query)
+
         
     except cx_Oracle.DatabaseError as er:
         print("Greska. Pokusavate da kreirate tabelu sa imenom koje vec postoji.")
@@ -48,9 +50,15 @@ def create_table():
 def readUsers():
     cursor = connection.cursor()
     cursor.execute("select * from brojilo order by idbrojila")
+    rows = cursor.fetchall()
+    if rows:
+        for item in rows:
+            print(item)
+    else:
+        rows = "Tabela je prazna!"
+        print(rows)
 
-    for item in cursor:
-        print(item)
+    return rows
 
 def deleteUser():
     print("Unesite id brojila za brisanje:")
