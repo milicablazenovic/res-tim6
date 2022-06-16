@@ -71,7 +71,7 @@ class Writer:
         Returns:
             string: odgovor servera
         """
-        Thread.sleep(3000)
+        #Thread.sleep(3000)
         self.socket.sendall(data.encode())
                                         
         server_response = self.socket.recv(1024)

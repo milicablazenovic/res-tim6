@@ -1,3 +1,4 @@
+import pickle
 from random import randint
 import sys
 import socket
@@ -10,7 +11,7 @@ class Worker:
     def __init__(self, lb_host, lb_port):
         self.lb_host = lb_host
         self.lb_port = lb_port 
-        self.lb_socket = socket.socket(socket.AF_INET, socket.SOCK)
+        self.lb_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def start(self):
         #pokusaj konekcije sa load balancerom  
@@ -28,10 +29,14 @@ class Worker:
             print('Zavrsena konekcija.\n') 
 
     def recieve_data(self):
-        # TODO: preuzimanje podataka od Load balancera
-        response = self.lb_socket.recv(1024).decode()
-        self.save_data(response)
-        pass
+        try:
+            print("Receiving...")
+            data, addr = self.lb_socket.recvfrom(1024)
+            unpickled_dictionary = pickle.loads(data)
+            print("Dictionary: ")
+            print(unpickled_dictionary)
+        except Exception as e:
+            print(e)
 
     def save_data(self, data):
         # podaci koje dolaze su dictionary

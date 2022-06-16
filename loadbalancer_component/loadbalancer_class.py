@@ -138,5 +138,9 @@ class LoadBalancer:
         try:
             json_object = json.dumps(dictionary).encode('utf-8')
             self.socket.sendall(json_object)
-        except:
-            print("Greska!!! Nije provereno koji Worker je slobodan pre slanja (i mozda generalno ne salje dobro)!")
+            pickled_dictionary = pickle.dumps(dictionary)
+            self.socket.sendall(pickled_dictionary)
+            print("Poslato!")
+        except Exception as e:
+            print(e)
+            print("Nije provereno koji Worker je slobodan pre slanja!")
