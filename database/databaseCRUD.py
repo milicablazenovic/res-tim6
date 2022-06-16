@@ -23,7 +23,7 @@ def db_disconnect():
         print("Zavrsena konekcija.")
 
 
-def create_table():
+def create_table(connection):
     cursor = connection.cursor()
     try:
         query = f"""create table brojilo(
@@ -43,6 +43,7 @@ def create_table():
         mesec integer not null)"""
         cursor.execute(query)
 
+        connection.commit()
         
     except cx_Oracle.DatabaseError as er:
         print("Greska. Pokusavate da kreirate tabelu sa imenom koje vec postoji.")
