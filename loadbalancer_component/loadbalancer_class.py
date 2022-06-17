@@ -79,7 +79,12 @@ class LoadBalancer:
 
     def worker_handler(self, worker_socket):        
         while True:
-            num_lines = sum(1 for line in open('buffer.txt'))
+            while True:
+                try:
+                    num_lines = sum(1 for line in open('buffer.txt'))
+                    break
+                except Exception as e:
+                    pass
             if (num_lines) == 10:                
                 # prikupi podatke
                 line_array = []
@@ -91,8 +96,9 @@ class LoadBalancer:
                     print(e)
 
                 dictionary = {}
-                self.parse_data(dictionary, line_array) # parisaranje za slanje
-                self.forward_data(dictionary, worker_socket) # slanje workeru
+                list_of_dictionaries = []
+                self.parse_data(list_of_dictionaries, line_array) # parisaranje za slanje
+                self.forward_data(list_of_dictionaries, worker_socket) # slanje workeru
                 self.delete_data() # brisanje podataka iz .txt
 
     # WRITERS
@@ -159,19 +165,19 @@ class LoadBalancer:
             f.close()
         except IOError:
             print('Greska pri otvaranju fajla!')
-
-    def parse_data(self, dictionary, line_array):
-        for line in line_array:               
+    
+    def parse_data(self, list_of_dictionaries, line_array):
+        for line in line_array:    
             line_pieces = line.split(" ")
             
             id = int(line_pieces[3])
             value = int(line_pieces[5])
 
-            dictionary[id] = value
+            list_of_dictionaries.append({id:value})
 
-    def forward_data(self, dictionary, worker_socket):
+    def forward_data(self, list_of_dictionaries, worker_socket):
         try:
-            pickled_dictionary = pickle.dumps(dictionary)
+            pickled_dictionary = pickle.dumps(list_of_dictionaries)
             worker_socket.sendall(pickled_dictionary)
             print('Poslato Workeru!')
         except Exception as e:

@@ -29,9 +29,9 @@ class Worker:
     def recieve_data(self):
         try:
             data, addr = self.lb_socket.recvfrom(1024)
-            unpickled_dictionary = pickle.loads(data)
-            print(unpickled_dictionary)
-            self.save_data(unpickled_dictionary)
+            unpickled_list_of_dictionaries = pickle.loads(data)
+            print(unpickled_list_of_dictionaries)
+            self.save_data(unpickled_list_of_dictionaries)
         except Exception as e:
             print(e)
 
@@ -40,19 +40,26 @@ class Worker:
         
         databaseCRUD.db_connect("baza_res", "res", "localhost/xe")
         cursor = databaseCRUD.connection.cursor()
-        for key in data:
+
+        for element in data:
+            dict_pairs = element.items()
+            pairs_iterator = iter(dict_pairs)
+            dict = next(pairs_iterator)
+            kljuc = dict[0]
+            vrednost = dict[1]
+
             # key je id a vrednost data[key]
             count = 0
             month = 0
             # provera da li prosledjeni id postoji
-            cursor.execute("select * from brojilo where idbrojila="+ str(key))
+            cursor.execute("select * from brojilo where idbrojila="+ str(kljuc))
             for item in cursor:
                 count +=1 
             if count == 0:
                 continue # necemo upisati taj podatak
             else:
                 # provera koji je sledeci mesec za koji se upisuje vrednost
-                cursor.execute("select * from potrosnja where idbrojila="+ str(key))
+                cursor.execute("select * from potrosnja where idbrojila="+ str(kljuc))
                 for item in cursor:
                     month += 1
 
@@ -62,7 +69,8 @@ class Worker:
                     nextMonth = month + 1
                     
                     query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
-                            values ('{str(key)}', '{str(data[key])}', '{str(nextMonth)}')"""
+                            values ('{str(kljuc)}', '{str(vrednost)}', '{str(nextMonth)}')"""
+                    print(query)
                     cursor.execute(query)
                     databaseCRUD.connection.commit()
                     print("Uspesno upisana vrednost.")

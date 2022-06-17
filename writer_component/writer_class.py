@@ -95,7 +95,6 @@ class Writer:
         
         return time_stamp + ' - ' + str(id) + ' : ' + str(value)
 
-    
     def data_input(self):
         """Manuelno slanje podataka o trenutnim vrednostiam brojila.
 
@@ -117,6 +116,3 @@ class Writer:
         except:
             print("Greska!")
             return ""
-
-        
-        
