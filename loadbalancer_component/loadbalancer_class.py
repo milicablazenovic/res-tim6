@@ -1,14 +1,13 @@
-import copy
-import json
 import pickle
 from pkgutil import get_data
 from re import I, T
 import select
 import socket
-import sys                                         
-import time
-import os
 from _thread import *
+from zoneinfo import available_timezones
+
+# Konstanta za buffer
+BUFFER_SIZE = 1024
 
 class LoadBalancer:
     def __init__(self, host, port, host2, port2):
@@ -18,13 +17,36 @@ class LoadBalancer:
         self.host2 = host2
         self.port2 = port2
 
-        self.values = {}
+        #self.values = {}
+        
+        # inicijalizovan klijentski soket (za writera)
+        # self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
      
+    def get_workers(self, filename):
+        with open(filename) as file:
+            lines = file.readlines()
+            junk = []
+            available_workers = []
+            
+            if len(lines) == 0:
+                print('Konfiguracioni fajl je prazan, izlaz...')
+                exit()
+                
+            for line in lines:
+                if line in ['\n', '\r\n']:
+                    junk.append(line)
+                else:
+                    strip_line = line.rstrip() #uklanja whitespaces
+                    available_workers.append(strip_line)
+                    
+        return available_workers
+            
+    
     def start(self):
         try:
             self.socket.bind((self.host, self.port))  
@@ -92,14 +114,8 @@ class LoadBalancer:
                     break
                 # ukoliko je izabrano paljenje/gasenje workera load balancer salje writeru listu upaljenih workera
                 if(data.lower() == 'off'):
-                    try:
-                        f = open("worker_list.txt", 'a+')
-                        worker_list = f.readlines() #lista upaljenih workera 
-                        writer_socket.send(worker_list.encode())
-                        #worker_on = writersocket.recv(1024).decode()
-                        pass
-                    finally:
-                        f.close()
+                    worker_list = self.get_workers('workers_list.txt')
+                    writer_socket.sendall(worker_list)
                 elif(data.lower() == 'on'):
                     #todo
                     pass
