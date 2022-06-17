@@ -43,6 +43,14 @@ def create_table(connection):
         mesec integer not null)"""
         cursor.execute(query)
 
+        query = """create sequence auto_inc
+                start with 1
+                increment by 1
+                minvalue 1
+                maxvalue 10000"""
+
+        cursor.execute(query)
+
         connection.commit()
         
     except cx_Oracle.DatabaseError as er:

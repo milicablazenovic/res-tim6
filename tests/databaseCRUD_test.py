@@ -18,8 +18,8 @@ class testdatabaseCRUD(unittest.TestCase):
         self.assertEqual(temp, "Tabela je prazna!")
 
         # test kada ima redova u tabeli
-        cursor.execute("insert into brojilo values (1, 'pera', 'peric', 'gradska', 28, 31000, 'Uzice')")
-        cursor.execute("insert into brojilo values (2, 'misa', 'misic', 'jevrejska', 15, 21000, 'Novi Sad')")
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'pera', 'peric', 'gradska', 28, 31000, 'Uzice')")
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'misa', 'misic', 'jevrejska', 15, 21000, 'Novi Sad')")
         conn.commit()
 
         temp = readUsers()
@@ -33,6 +33,7 @@ class testdatabaseCRUD(unittest.TestCase):
         # test da li se tabele kreiraju kako treba
         cursor.execute("drop table potrosnja")
         cursor.execute("drop table brojilo")
+        cursor.execute("drop sequence auto_inc")
         conn.commit()
 
         create_table(conn)
@@ -48,5 +49,6 @@ class testdatabaseCRUD(unittest.TestCase):
     def tearDown(self):
         cursor.execute("drop table potrosnja")
         cursor.execute("drop table brojilo")
+        cursor.execute("drop sequence auto_inc")
         conn.commit()
         conn.close()
