@@ -14,13 +14,11 @@ class Worker:
         self.lb_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def start(self):
-        #pokusaj konekcije sa load balancerom  
         try:
             self.lb_socket.connect((self.lb_host, self.lb_port))
-            print('Uspesna konekcija.\n')
+            print('Uspesna konekcija.\n')            
             while True:
-                #TODO
-                #prihvatamo podatke od lb
+                # prihvatamo podatke od LB
                 self.recieve_data()                          
         except socket.error as e:
             print('Greska u komunikaciji sa load balancerom. ' + str(e))
@@ -30,10 +28,8 @@ class Worker:
 
     def recieve_data(self):
         try:
-            print("Receiving...")
             data, addr = self.lb_socket.recvfrom(1024)
             unpickled_dictionary = pickle.loads(data)
-            print("Dictionary: ")
             print(unpickled_dictionary)
         except Exception as e:
             print(e)
