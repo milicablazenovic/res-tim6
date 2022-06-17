@@ -31,6 +31,7 @@ class Worker:
             data, addr = self.lb_socket.recvfrom(1024)
             unpickled_dictionary = pickle.loads(data)
             print(unpickled_dictionary)
+            self.save_data(unpickled_dictionary)
         except Exception as e:
             print(e)
 
@@ -39,9 +40,8 @@ class Worker:
         
         databaseCRUD.db_connect("baza_res", "res", "localhost/xe")
         cursor = databaseCRUD.connection.cursor()
-
-        for key, value in data.items():
-            # key je id, a value vrednost
+        for key in data:
+            # key je id a vrednost data[key]
             count = 0
             month = 0
             # provera da li prosledjeni id postoji
@@ -49,7 +49,7 @@ class Worker:
             for item in cursor:
                 count +=1 
             if count == 0:
-                return # necemo upisati taj podatak
+                continue # necemo upisati taj podatak
             else:
                 # provera koji je sledeci mesec za koji se upisuje vrednost
                 cursor.execute("select * from potrosnja where idbrojila="+ str(key))
@@ -57,13 +57,14 @@ class Worker:
                     month += 1
 
                 if month == 12:
-                    return
+                    continue
                 else:
                     nextMonth = month + 1
                     
                     query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
-                            values ('{str(key)}', '{str(value)}', '{str(nextMonth)}')"""
+                            values ('{str(key)}', '{str(data[key])}', '{str(nextMonth)}')"""
                     cursor.execute(query)
                     databaseCRUD.connection.commit()
                     print("Uspesno upisana vrednost.")
+            
         
