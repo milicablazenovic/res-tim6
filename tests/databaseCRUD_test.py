@@ -1,15 +1,16 @@
+import cx_Oracle
 import sys
 sys.path.append('../')
-import cx_Oracle
 import database.databaseCRUD as databaseCRUD
 from database.databaseCRUD import create_table, readUsers, db_connect, deleteUser
 import unittest, unittest.mock
 from unittest.mock import Mock, patch, MagicMock 
+from database.Brojilo import Brojilo
 
 class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):
         global cursor, conn
-        conn = db_connect("baza_test", "test", "localhost/xe")
+        conn = db_connect("baza_res", "res", "localhost/xe")
         cursor = conn.cursor()
         
         create_table(conn)
@@ -18,8 +19,8 @@ class testdatabaseCRUD(unittest.TestCase):
     def test_db_connect(self, mock_sql):
         self.assertIs(databaseCRUD.cx_Oracle, mock_sql)
 
-        db_connect("baza_test", "test", "localhost/xe")
-        mock_sql.connect.assert_called_with("baza_test", "test", "localhost/xe")
+        db_connect("baza_res", "res", "localhost/xe")
+        mock_sql.connect.assert_called_with("baza_res", "res", "localhost/xe")
 
     def test_db_connect_input(self):
 
@@ -33,6 +34,60 @@ class testdatabaseCRUD(unittest.TestCase):
         self.assertRaises(TypeError)
         db_connect()
         self.assertRaises(cx_Oracle.DatabaseError)
+
+    # Create ->
+    def kreirajBrojilo(self): 
+        brojilo = Brojilo()
+        brojilo.ime = 'Ime'
+        brojilo.prezime = 'Prezime'
+        brojilo.ulica = 'Ulica'
+        brojilo.broj = 'Broj'
+        brojilo.postanski_broj = 1
+        brojilo.grad = 'Grad'
+        return brojilo
+
+    def test_save_user_to_db_if_first_name_is_empty(self):
+        brojilo = self.kreirajBrojilo()
+        brojilo.ime = ''
+        rezultat = brojilo.save_user_to_db()
+        self.assertEqual(rezultat, 'Niste upisali ime!')
+
+    def test_save_user_to_db_if_last_name_is_empty(self):
+        brojilo = self.kreirajBrojilo()
+        brojilo.prezime = ''
+        rezultat = brojilo.save_user_to_db()
+        self.assertEqual(rezultat, 'Niste upisali prezime!')
+
+    def test_save_user_to_db_if_street_is_empty(self):
+        brojilo = self.kreirajBrojilo()
+        brojilo.ulica = ''
+        rezultat = brojilo.save_user_to_db()
+        self.assertEqual(rezultat, 'Niste upisali ulicu!')
+
+    def test_save_user_to_db_if_number_is_empty(self):
+        brojilo = self.kreirajBrojilo()
+        brojilo.broj = ''
+        rezultat = brojilo.save_user_to_db()
+        self.assertEqual(rezultat, 'Niste upisali broj!')
+
+    def test_save_user_to_db_if_postal_code_is_empty(self):
+        brojilo = self.kreirajBrojilo()
+        brojilo.postanski_broj = ''
+        rezultat = brojilo.save_user_to_db()
+        self.assertEqual(rezultat, 'Niste upisali postanski broj!')
+
+    def test_save_user_to_db_if_city_is_empty(self):
+        brojilo = self.kreirajBrojilo()
+        brojilo.grad = ''
+        rezultat = brojilo.save_user_to_db()
+        self.assertEqual(rezultat, 'Niste upisali grad!')
+
+    def test_save_user_to_db_if_postal_code_is_text(self):
+        brojilo = self.kreirajBrojilo()
+        brojilo.postanski_broj = '9198984'
+        rezultat = brojilo.save_user_to_db()
+        self.assertEqual(rezultat, 'Niste upisali validan postanski broj!')
+    # <- Create
 
     def test_readUsers(self):
         # test kada nema redova u tabeli

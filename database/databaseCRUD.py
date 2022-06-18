@@ -154,3 +154,4 @@ def updateUser():
                 print("Molim Vas izaberite opcije 1-6.\n")
         
         print("Izasli ste iz menija za izmenu.\n")
+
