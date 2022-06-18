@@ -1,16 +1,38 @@
 import sys
 sys.path.append('../')
-from database.databaseCRUD import create_table, readUsers, deleteUser,  db_connect
+import cx_Oracle
+import database.databaseCRUD as databaseCRUD
+from database.databaseCRUD import create_table, readUsers, db_connect, deleteUser
 import unittest, unittest.mock
-import cx_Oracle 
+from unittest.mock import Mock, patch, MagicMock 
 
 class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):
         global cursor, conn
-        conn = db_connect("Baza", "ftn", "localhost1521/xe")
+        conn = db_connect("baza_test", "test", "localhost/xe")
         cursor = conn.cursor()
         
         create_table(conn)
+
+    @patch('database.databaseCRUD.cx_Oracle')
+    def test_db_connect(self, mock_sql):
+        self.assertIs(databaseCRUD.cx_Oracle, mock_sql)
+
+        db_connect("baza_test", "test", "localhost/xe")
+        mock_sql.connect.assert_called_with("baza_test", "test", "localhost/xe")
+
+    def test_db_connect_input(self):
+
+        db_connect("asdf", "qwer", "localhost")
+        self.assertRaises(cx_Oracle.DatabaseError)
+        db_connect("", "", "")
+        self.assertRaises(cx_Oracle.DatabaseError)
+        db_connect(True, False, True)
+        self.assertRaises(TypeError)
+        db_connect(1, 1, 1)
+        self.assertRaises(TypeError)
+        db_connect()
+        self.assertRaises(cx_Oracle.DatabaseError)
 
     def test_readUsers(self):
         # test kada nema redova u tabeli

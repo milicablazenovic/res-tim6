@@ -17,6 +17,8 @@ def db_connect(username='', password='', dsn=''):
         return connection
     except cx_Oracle.DatabaseError as er:
         print('Postoji greska sa Oracle bazom:', er)
+    except TypeError:
+        print("Username, password i dsn moraju biti stringovi!")
         
 def db_disconnect():
     if connection:
