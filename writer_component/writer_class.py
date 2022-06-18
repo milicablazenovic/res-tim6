@@ -101,7 +101,7 @@ class Writer:
         id = input()
         print("Unesite vrednost: ")
         value = input()
-        self.data_input_format(id, value)
+        return self.data_input_format(id, value)
 
     def data_input_format(self, id, value):
         """Manuelno slanje podataka o trenutnim vrednostiam brojila.
@@ -111,10 +111,9 @@ class Writer:
         """
         try:
             id = int(id)
-            value = int(value)
+            value = float(value)
             dt = datetime.now()
             time_stamp = dt.strftime('%X %x')
-
             return time_stamp + ' - ' + str(id) + ' : ' + str(value)
         except ValueError:
             print("Greska! Vrednosti moraju biti ceo broj.")
