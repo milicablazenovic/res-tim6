@@ -20,7 +20,12 @@ while case != 5:
     elif case == 3:
         databaseCRUD.updateUser()
     elif case == 4:
-        databaseCRUD.deleteUser()
+        print("Unesite id brojila za brisanje:")
+        idZaBrisanje = input()
+        if(len(idZaBrisanje)==0):
+            print("Morate uneti id")
+        else:
+            databaseCRUD.deleteUser(idZaBrisanje)
     else:
         print("Molim Vas izaberite neke od opcija 1-4.\n")
 
