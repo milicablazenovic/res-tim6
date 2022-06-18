@@ -1,13 +1,13 @@
 import sys
 sys.path.append('../')
-from database.databaseCRUD import create_table, readUsers, db_connect
+from database.databaseCRUD import create_table, readUsers, deleteUser,  db_connect
 import unittest, unittest.mock
 import cx_Oracle 
 
 class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):
         global cursor, conn
-        conn = db_connect("baza_test", "test", "localhost/xe")
+        conn = db_connect("Baza", "ftn", "localhost1521/xe")
         cursor = conn.cursor()
         
         create_table(conn)
@@ -45,6 +45,17 @@ class testdatabaseCRUD(unittest.TestCase):
         result = cursor.fetchall()
 
         self.assertEqual(result, [('BROJILO',), ('POTROSNJA',)])
+
+    def test_deleteUser(self):
+        #brisanje postojeceg Id-brisanje misa misic id=2 
+        deleteUser()
+        idZaBrisanje = 2
+        readUsers()        
+
+        #test da li baca error kada pokusa da se obrise nepostojeci Id
+        deleteUser()
+        temp=readUsers()
+        self.assertEqual(temp, [(1, "pera", "peric", "gradska", 28, 31000, "Uzice")])
         
     def tearDown(self):
         cursor.execute("drop table potrosnja")
