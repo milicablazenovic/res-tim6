@@ -15,10 +15,13 @@ while case != 5:
         
     if case == 1:
         databaseCRUD.createUser()
+
     elif case == 2:
         databaseCRUD.readUsers()
+
     elif case == 3:
         databaseCRUD.updateUser()
+        
     elif case == 4:
         print("Unesite id brojila za brisanje:")
         idZaBrisanje = input()
@@ -30,3 +33,6 @@ while case != 5:
         print("Molim Vas izaberite neke od opcija 1-4.\n")
 
 print("Izasli ste iz menija")
+
+
+
