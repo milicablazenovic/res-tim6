@@ -145,26 +145,6 @@ class LoadBalancer:
         except OSError:
             print('Neuspesno otvaranje fajla!')
             exit()
-
-        self.get_data()
-
-    def get_data(self):
-        # prikuplja 10 vrednosti iz datoteke:
-        line_array = []
-        try:
-            f = open("buffer.txt", "r")
-
-            count = 0
-            for line in f:
-                if (count < 10):
-                    line_array.append(line)
-                    count += 1
-                else:
-                    break
-
-            f.close()
-        except IOError:
-            print('Greska pri otvaranju fajla!')
     
     def parse_data(self, list_of_dictionaries, line_array):
         for line in line_array:    

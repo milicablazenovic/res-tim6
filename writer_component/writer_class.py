@@ -95,20 +95,25 @@ class Writer:
         
         return time_stamp + ' - ' + str(id) + ' : ' + str(value)
 
+
     def data_input(self):
+        print("Unesite id brojila: ")
+        id = input()
+        print("Unesite vrednost: ")
+        value = input()
+        return self.data_input_format(id, value)
+
+    def data_input_format(self, id, value):
         """Manuelno slanje podataka o trenutnim vrednostiam brojila.
 
         Returns:            
             string: Podatak za slanje u vidu stringa 'vreme - id_brojila : trenutna_vrednost'
         """
         try:
-            print("Unesite id brojila: ")
-            id = int(input())
-            print("Unesite vrednost: ")
-            value = int(input())
+            id = int(id)
+            value = float(value)
             dt = datetime.now()
             time_stamp = dt.strftime('%X %x')
-
             return time_stamp + ' - ' + str(id) + ' : ' + str(value)
         except ValueError:
             print("Greska! Vrednosti moraju biti ceo broj.")

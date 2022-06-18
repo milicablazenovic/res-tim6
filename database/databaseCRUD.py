@@ -1,3 +1,4 @@
+from asyncio import constants
 import cx_Oracle
 from database.Brojilo import Brojilo
 
@@ -16,6 +17,8 @@ def db_connect(username='', password='', dsn=''):
         return connection
     except cx_Oracle.DatabaseError as er:
         print('Postoji greska sa Oracle bazom:', er)
+    except TypeError:
+        print("Username, password i dsn moraju biti stringovi!")
         
 def db_disconnect():
     if connection:
@@ -69,16 +72,20 @@ def readUsers():
 
     return rows
 
-def deleteUser():
-    print("Unesite id brojila za brisanje:")
-    idZaBrisanje = input()
-    if(len(idZaBrisanje)==0):
-        print("Morate uneti id")
-    else:
-        cursor = connection.cursor()
+def deleteUser(idZaBrisanje):
+    cursor = connection.cursor()
+    cursor.execute("select * from brojilo where idbrojila="+str(idZaBrisanje))
+    row = cursor.fetchone()
+    if row:
         cursor.execute("delete from brojilo where idbrojila="+str(idZaBrisanje))
-
-    connection.commit()
+        connection.commit()
+        result ="Uspesno ste obrisali korisnika!"
+        print(result)
+        return result
+    else:
+        result = "Greska, ne postoji ovaj Id u bazi!"
+        print(result)
+        return result
 
 def createUser():
     brojilo = Brojilo()
