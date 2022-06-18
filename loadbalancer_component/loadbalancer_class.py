@@ -145,8 +145,6 @@ class LoadBalancer:
         except OSError:
             print('Neuspesno otvaranje fajla!')
             exit()
-
-        self.get_data()
     
     def parse_data(self, list_of_dictionaries, line_array):
         for line in line_array:    
