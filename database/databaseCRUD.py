@@ -1,3 +1,4 @@
+from asyncio import constants
 import cx_Oracle
 from database.Brojilo import Brojilo
 
@@ -69,14 +70,19 @@ def readUsers():
 
     return rows
 
-def deleteUser():
-    print("Unesite id brojila za brisanje:")
-    idZaBrisanje = input()
-    if(len(idZaBrisanje)==0):
-        print("Morate uneti id")
-    else:
-        cursor = connection.cursor()
+def deleteUser(idZaBrisanje):
+    cursor = connection.cursor()
+    cursor.execute("select from brojilo where idbrojila="+str(idZaBrisanje))
+    row = cursor.fetchone()
+    if row:
         cursor.execute("delete from brojilo where idbrojila="+str(idZaBrisanje))
+        rows ="Uspesno ste obrisali korisnika!"
+        print(rows)
+        return rows
+    else :
+        rows = "Greska, ne postoji ovaj Id u bazi!"
+        print(rows)
+        return rows
 
     connection.commit()
 
