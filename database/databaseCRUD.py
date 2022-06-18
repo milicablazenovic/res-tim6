@@ -72,19 +72,18 @@ def readUsers():
 
 def deleteUser(idZaBrisanje):
     cursor = connection.cursor()
-    cursor.execute("select from brojilo where idbrojila="+str(idZaBrisanje))
+    cursor.execute("select * from brojilo where idbrojila="+str(idZaBrisanje))
     row = cursor.fetchone()
     if row:
         cursor.execute("delete from brojilo where idbrojila="+str(idZaBrisanje))
-        rows ="Uspesno ste obrisali korisnika!"
-        print(rows)
-        return rows
-    else :
-        rows = "Greska, ne postoji ovaj Id u bazi!"
-        print(rows)
-        return rows
-
-    connection.commit()
+        connection.commit()
+        result ="Uspesno ste obrisali korisnika!"
+        print(result)
+        return result
+    else:
+        result = "Greska, ne postoji ovaj Id u bazi!"
+        print(result)
+        return result
 
 def createUser():
     brojilo = Brojilo()
