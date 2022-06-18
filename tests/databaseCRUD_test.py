@@ -47,15 +47,37 @@ class testdatabaseCRUD(unittest.TestCase):
         self.assertEqual(result, [('BROJILO',), ('POTROSNJA',)])
 
     def test_deleteUser(self):
-        #brisanje postojeceg Id-brisanje misa misic id=2 
-        deleteUser()
-        idZaBrisanje = 2
-        readUsers()        
-
         #test da li baca error kada pokusa da se obrise nepostojeci Id
-        deleteUser()
-        temp=readUsers()
-        self.assertEqual(temp, [(1, "pera", "peric", "gradska", 28, 31000, "Uzice")])
+        temp = deleteUser(2)        
+        self.assertEqual(temp, "Greska, ne postoji ovaj Id u bazi!")
+        
+
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'pera', 'peric', 'gradska', 28, 31000, 'Uzice')")
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'misa', 'misic', 'jevrejska', 15, 21000, 'Novi Sad')")
+        conn.commit()
+
+        #brisanje postojeceg Id-brisanje misa misic id=2         
+        temp = deleteUser(2)
+        temp2 = readUsers()
+        self.assertEqual(temp, "Uspesno ste obrisali korisnika!")
+        self.assertEqual(temp2, [(1, "pera", "peric", "gradska", 28, 31000, "Uzice")])
+
+
+        #dodavanje 2 korisnika 
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'pera', 'peric', 'gradska', 28, 31000, 'Uzice')")
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'misa', 'misic', 'jevrejska', 15, 21000, 'Novi Sad')")
+        conn.commit()
+        
+        #brisanje postojeceg Id-brisanje misa misic id=2 
+        temp = deleteUser(2) 
+        self.assertEqual(temp, "Uspesno ste obrisali korisnika")
+        conn.commit()
+    
+        #test da li baca error kada pokusa da se obrise nepostojeci Id
+        temp = deleteUser(2) 
+        self.assertEqual(temp, "Greska, ne postoji ovaj Id u bazi")
+        conn.commit()
+        
         
     def tearDown(self):
         cursor.execute("drop table potrosnja")
