@@ -21,11 +21,6 @@ class LoadBalancer:
         self.host2 = host2
         self.port2 = port2
 
-        #self.values = {}
-        
-        # inicijalizovan klijentski soket (za writera)
-        # self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -88,6 +83,7 @@ class LoadBalancer:
                     break
                 except Exception as e:
                     pass
+
             if (num_lines) >= 10:                
                 # prikupi podatke
                 n = 10
@@ -107,7 +103,6 @@ class LoadBalancer:
                 list_of_dictionaries = []
                 self.parse_data(list_of_dictionaries, nfirstlines) # parisaranje za slanje
                 self.forward_data(list_of_dictionaries, worker_socket) # slanje workeru
-                # self.delete_data('buffer.txt') # brisanje podataka iz .txt
 
     # WRITERS
     def accept_connections(self, socket, read_list):
@@ -125,7 +120,6 @@ class LoadBalancer:
 
                 # ukoliko je taj podatak 'end' -> prekidam konekciju i sa strane load balancera
                 if (data == 'end'):
-                    print('Writer se otkacio!')
                     break
                 # ukoliko je izabrano paljenje/gasenje workera load balancer salje writeru listu upaljenih workera
                 if(data.lower() == 'off'):
@@ -142,6 +136,7 @@ class LoadBalancer:
             except socket.error as e:
                 print('Greska: ' + str(e))
                 break
+<<<<<<< HEAD
 
         writer_socket.close()
         print('Zavrsena konekcija.')
@@ -153,6 +148,12 @@ class LoadBalancer:
 
         if(data == ""):
             return 'Greska, podatak ne moze biti prazan string!' 
+=======
+        
+        read_list.remove(writer_socket)
+        self.close_socket(writer_socket)
+        print('Zavrsena konekcija.')    
+>>>>>>> b6248296a204fb1799a9252e7aa066d4c7e219a1
 
         try:
             buffer = open(filename, 'a')
@@ -197,20 +198,9 @@ class LoadBalancer:
         except Exception as e:
             print(f'Greska! {e}')
             return False
-    
-    # def delete_data(self, file_name):
-    #     try:
-    #         fin = open(file_name, 'r')
-    #         data = fin.read().splitlines(True)
-    #         fin.close()
-
-    #         fout = open(file_name, 'w')
-    #         fout.writelines(data[10:])
-    #         fout.close()
             
-    #         return 'Uspesno obrisani podaci iz datoteke!'       
-    #     except Exception as e:
-    #         print(f'Greska pri brisanju podataka! {e}')
+    def close_socket(self, any_socket):
+        any_socket.close()
 
     def close_sockets(self):
         self.socket.close()
