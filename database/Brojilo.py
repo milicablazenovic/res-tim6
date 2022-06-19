@@ -1,6 +1,7 @@
 import cx_Oracle
 
-connection = cx_Oracle.connect("baza_res", "res", "localhost/xe")
+connection = cx_Oracle.connect("PR1362018", "ftn", "localhost/xe")
+#connection = cx_Oracle.connect("baza_res", "res", "localhost/xe")
 
 class Brojilo:
     ime = ""
