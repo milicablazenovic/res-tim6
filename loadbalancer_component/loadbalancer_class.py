@@ -156,12 +156,27 @@ class LoadBalancer:
             list_of_dictionaries.append({id:value})
 
     def forward_data(self, list_of_dictionaries, worker_socket):
+        # postoji zbog testova
+        if (type(list_of_dictionaries) is not list):
+            return 'Neispravna lista!'
+        
+        # postoji zbog testova
+        if (len(list_of_dictionaries) < 10):
+            return 'Nema 10 vrednosti u listi!'
+
+        # postoji zbog testova
+        for el in list_of_dictionaries:
+            if (type(el) is not dict):
+                return 'Neispravni elementi u listi!'
+
         try:
             pickled_dictionary = pickle.dumps(list_of_dictionaries)
             worker_socket.sendall(pickled_dictionary)
             print('Poslato Workeru!')
+            return True
         except Exception as e:
             print('Greska! ' + e)
+            return False
     
     def delete_data(self):
         fin = open('buffer.txt', 'r')
@@ -169,3 +184,7 @@ class LoadBalancer:
 
         fout = open('buffer.txt', 'w')
         fout.writelines(data[10:])   
+
+    def close_sockets(self):
+        self.socket.close()
+        self.socket2.close()
