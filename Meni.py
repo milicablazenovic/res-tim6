@@ -1,3 +1,4 @@
+from threading import BrokenBarrierError
 import database.databaseCRUD as databaseCRUD 
 
 global case
@@ -20,7 +21,24 @@ while case != 5:
         databaseCRUD.readUsers()
 
     elif case == 3:
-        databaseCRUD.updateUser()
+        print("Unesite id brojila za izmenu:")
+        idZaBrisanje = input()
+        if(len(idZaBrisanje)==0):
+            print("Morate uneti id")
+        else:
+            print("Unesite novo ime: ")
+            ime = input()
+            print("Unesite novo prezime: ")
+            prezime = input()
+            print("Unesite novu ulicu: ")
+            ulica = input()
+            print("Unesite novi broj: ")
+            broj = input()
+            print("Unesite novi postanski broj: ")
+            post_broj = input()
+            print("Unesite novi grad: ")
+            grad = input()
+            databaseCRUD.updateUser(idZaBrisanje, ime, prezime, ulica, broj, post_broj, grad)
         
     elif case == 4:
         print("Unesite id brojila za brisanje:")
