@@ -2,6 +2,7 @@ import socket
 from random import randint
 from datetime import datetime
 from threading import Thread
+import time
 
 class Writer:
     def __init__(self, host, port):
@@ -17,7 +18,7 @@ class Writer:
             
             while True:
                 print('Izaberite opciju\n'
-                      + '1. Automatsko slanje podataka\n' 
+                      + '1. Automatsko slanje podataka (CTRL-C za prekid)\n' 
                       + '2. Manuelno slanje podataka\n'
                       + '3. Paljenje\Gasenje workera\n'
                       + '4. Prekid konekcije') 
@@ -25,7 +26,22 @@ class Writer:
                 send_data = ''
                 
                 if case == 1:
-                    send_data = self.data_auto()
+                    while True:
+                        try:
+                            send_data = self.data_auto()
+
+                            if send_data:
+                                response = self.send(send_data)
+                                if response == 'Nema odgovora':
+                                    break
+                                print(response)                    
+                            else:
+                                print('Poruka nije poslata. Pokusajte ponovo.\n')
+
+                            time.sleep(3)                        
+                        except KeyboardInterrupt:
+                            break
+
                 elif case == 2:
                     send_data = self.data_input()  
                 elif case == 3:
@@ -71,7 +87,6 @@ class Writer:
         Returns:
             string: odgovor servera
         """
-        #Thread.sleep(3000)
         self.socket.sendall(data.encode())
                                         
         server_response = self.socket.recv(1024)
