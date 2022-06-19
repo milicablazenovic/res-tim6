@@ -75,7 +75,7 @@ class Writer:
         except socket.error as e:
             print('Greska u komunikaciji sa load balancerom. ' + str(e))
         finally:
-            self.socket.close()
+            self.close_socket()
             print('Zavrsena konekcija.\n') 
             
     def send(self, data):
@@ -125,14 +125,21 @@ class Writer:
             string: Podatak za slanje u vidu stringa 'vreme - id_brojila : trenutna_vrednost'
         """
         try:
-            id = int(id)
-            value = int(value)
-            dt = datetime.now()
-            time_stamp = dt.strftime('%X %x')
-            return time_stamp + ' - ' + str(id) + ' : ' + str(value)
-        except ValueError:
-            print("Greska! Vrednosti moraju biti ceo broj.")
-            return ""
-        except:
-            print("Greska!")
-            return ""
+            if type(id) != int:
+                raise Exception("Greska! Id mora biti ceo broj.")
+            if type(value) == str:
+                raise Exception("Greska! Vrednost mora biti broj.")
+            if id < 0 or value < 0:
+                raise Exception("Greska! Id i vrednost ne smeju biti negativni.")
+            else:
+                id = int(id)
+                value = int(value)
+                dt = datetime.now()
+                time_stamp = dt.strftime('%X %x')
+                return time_stamp + ' - ' + str(id) + ' : ' + str(value)
+        except Exception as e:
+            print(e)
+        
+    
+    def close_socket(self):
+        self.socket.close()

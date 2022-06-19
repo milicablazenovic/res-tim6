@@ -4,7 +4,7 @@ from database.Brojilo import Brojilo
 
 global case
 case=10 
-databaseCRUD.db_connect('PR1362018', 'ftn', 'localhost/xe')      
+databaseCRUD.db_connect('baza_res', 'res', 'localhost/xe')      
 while case != 5:
     print("Izaberite opciju:\n" + 
         "1. Unesite 1 za kreiranje novog korisnika \n" + 

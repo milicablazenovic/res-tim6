@@ -147,7 +147,7 @@ class LoadBalancer:
 
         if(data == ""):
             return 'Greska, podatak ne moze biti prazan string!' 
-         
+
         try:
             buffer = open(filename, 'a')
             buffer.write(data + '\n')
