@@ -1,10 +1,9 @@
-from threading import BrokenBarrierError
-import database.databaseCRUD as databaseCRUD 
-from database.Brojilo import Brojilo
+from database.databaseCRUD import deleteUser, readUsers, updateUser, deleteUser, createUser, db_connect 
+from database.brojilo import Brojilo
 
 global case
 case=10 
-databaseCRUD.db_connect('baza_res', 'res', 'localhost/xe')      
+db_connect('baza_res', 'res', 'localhost/xe')      
 while case != 5:
     print("Izaberite opciju:\n" + 
         "1. Unesite 1 za kreiranje novog korisnika \n" + 
@@ -29,11 +28,11 @@ while case != 5:
         post_broj = input()
         print("Unesite grad: ")
         grad = input()
-        ret_val = databaseCRUD.createUser(Brojilo(ime, prezime, ulica, broj, post_broj, grad))
+        ret_val = createUser(Brojilo(ime, prezime, ulica, broj, post_broj, grad))
         print(ret_val)
 
     elif case == 2:
-        databaseCRUD.readUsers()
+        readUsers()
 
     elif case == 3:
         print("Unesite id brojila za izmenu:")
@@ -53,7 +52,7 @@ while case != 5:
             post_broj = input()
             print("Unesite novi grad: ")
             grad = input()
-            ret_val = databaseCRUD.updateUser(int(idZaBrisanje), ime, prezime, ulica, broj, post_broj, grad)
+            ret_val = updateUser(int(idZaBrisanje), ime, prezime, ulica, broj, post_broj, grad)
             print(ret_val)
             
     elif case == 4:
@@ -62,7 +61,7 @@ while case != 5:
         if(len(idZaBrisanje)==0):
             print("Morate uneti id")
         else:
-            databaseCRUD.deleteUser(idZaBrisanje)
+            deleteUser(idZaBrisanje)
     else:
         print("Molim Vas izaberite neke od opcija 1-4.\n")
 

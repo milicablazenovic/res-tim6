@@ -1,9 +1,7 @@
-from asyncio import constants
-from itertools import count
-from multiprocessing.sharedctypes import Value
+
 import string
 import cx_Oracle
-from database.Brojilo import Brojilo
+from database.brojilo import Brojilo
 
 def db_connect(username='', password='', dsn=''):
     """Konekcija sa Oracle bazom.

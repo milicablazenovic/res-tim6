@@ -1,14 +1,12 @@
 
-from multiprocessing.sharedctypes import Value
-from weakref import KeyedRef
 import cx_Oracle
 import sys
 sys.path.append('../')
 import database.databaseCRUD as databaseCRUD
 from database.databaseCRUD import create_table, readUsers, db_connect, deleteUser, updateUser
 import unittest, unittest.mock
-from unittest.mock import Mock, patch, MagicMock 
-from database.Brojilo import Brojilo
+from unittest.mock import Mock, patch 
+from database.brojilo import Brojilo
 
 class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):

@@ -1,7 +1,6 @@
 from datetime import datetime
 from multiprocessing.sharedctypes import Value
 from re import T
-from socket import socket
 import sys
 import unittest
 import socket
@@ -50,4 +49,3 @@ class testWriter(unittest.TestCase):
         
 if __name__ == "__main__":
     unittest.main()
-        

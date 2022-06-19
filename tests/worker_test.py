@@ -1,11 +1,11 @@
-from os import curdir
+import socket
 import sys
 import unittest
 import pickle
 sys.path.append('../')
 from unittest.mock import Mock, patch
 from worker_component.worker_class import Worker
-from database.databaseCRUD import db_connect, create_table, db_disconnect
+from database.databaseCRUD import db_connect, create_table
 
 class testWorker(unittest.TestCase):
     @patch('worker_component.worker_class.socket.socket')
@@ -24,6 +24,12 @@ class testWorker(unittest.TestCase):
         pickle.loads.assert_called()
         worker.close_socket()
     
+
+    def test_start(self):
+        worker = Worker("asdf", 8082)
+        self.assertRaises(TypeError, worker.start())
+        worker.close_socket()
+
     def test_save_data(self):
         worker = Worker('localhost', 8082)
 
@@ -74,3 +80,6 @@ class testWorker(unittest.TestCase):
         conn.commit()
 
         worker.close_socket()
+
+if __name__ == "__main__":
+    unittest.main()

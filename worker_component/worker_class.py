@@ -20,8 +20,8 @@ class Worker:
             while True:
                 # prihvatamo podatke od LB
                 self.recieve_data(self.lb_socket)                          
-        except socket.error as e:
-            print('Greska u komunikaciji sa load balancerom. ' + str(e))
+        except:
+            print('Greska u komunikaciji sa load balancerom.')
         finally:
             self.close_socket()
             print('Zavrsena konekcija.\n') 
