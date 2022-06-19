@@ -2,3 +2,4 @@ database/__pycache__
 worker_component/__pycache__
 tests/__pycache__
 writer_component/__pycache__
+loadbalancer_component/__pycache__
