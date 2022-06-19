@@ -10,10 +10,24 @@ class Writer:
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
+    def connect_socket(self):
+        try:
+            if(type(self.host) != str or (type(self.port) !=int)):
+                raise TypeError('Pogresno uneta adresa za konekciju')
+            self.socket.connect((self.host, self.port))
+        except socket.error as e:
+           return e
+        except TypeError as te:
+            return te    
+    
     def start(self):    
         #pokusaj konekcije sa load balancerom  
         try:
-            self.socket.connect((self.host, self.port))
+            ret_val = self.connect_socket()
+            if ret_val:
+                self.close_socket()
+                raise TypeError
+            
             print('Uspesna konekcija.\n')
             
             while True:
@@ -31,7 +45,9 @@ class Writer:
                             send_data = self.data_auto()
 
                             if send_data:
-                                response = self.send(send_data)
+                                response, sent = self.send(send_data, self.socket)
+                                if sent == False:
+                                    break
                                 if response == 'Nema odgovora':
                                     break
                                 print(response)                    
@@ -53,10 +69,10 @@ class Writer:
                         continue
                     elif on_off == 1:
                         send_data = 'off'
-                        response = self.send(send_data)
+                        response = self.send(send_data, self.socket)
                     else:
                         send_data = 'on'  
-                        response = self.send(send_data)                                                                     
+                        response = self.send(send_data, self.socket)                                                                     
                 elif case == 4:
                     send_data = 'end' # saljem 'end' load balanceru da bi on znao da necu vise da pricam s njim
                 else:
@@ -64,21 +80,22 @@ class Writer:
                 
                 #provera da li je uspesno sakupljen podatak za slanje    
                 if send_data:
-                    response = self.send(send_data)
-                    if response == 'Nema odgovora':
+                    response, sent = self.send(send_data, self.socket)
+                    if response == 'Nema odgovora' or sent == False :
                         break
                     
                     print(response)                    
                 else:
                     print('Poruka nije poslata. Pokusajte ponovo.\n')
-                    
+        except TypeError as b:
+            print('Greska u komunikaciji sa load balancerom. ' + str(b))                    
         except socket.error as e:
             print('Greska u komunikaciji sa load balancerom. ' + str(e))
         finally:
             self.close_socket()
             print('Zavrsena konekcija.\n') 
             
-    def send(self, data):
+    def send(self, data, socket):
         """Metoda za slanje podataka serveru 
 
         Args:
@@ -87,14 +104,16 @@ class Writer:
         Returns:
             string: odgovor servera
         """
-        self.socket.sendall(data.encode())
-                                        
-        server_response = self.socket.recv(1024)
-                    
+        if(type(data) != str):
+            raise TypeError("Poruka treba da bude string!")
+        socket.sendall(data.encode())
+                                            
+        server_response = socket.recv(1024)
+                        
         if server_response:
-            return server_response.decode()
+                return server_response.decode(), True
         else:
-            return 'Nema odgovora' #ako nema odgovora od servera zatvara se konekcija
+            return 'Nema odgovora', False #ako nema odgovora od servera zatvara se konekcija
             
     def data_auto(self):
         """Automatsko slanje podataka o trenutim vrednostima brojila.

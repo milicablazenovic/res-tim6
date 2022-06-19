@@ -1,7 +1,11 @@
 from datetime import datetime
 from multiprocessing.sharedctypes import Value
+from re import T
+from socket import socket
 import sys
 import unittest
+import socket
+from unittest.mock import Mock
 sys.path.append('../')
 from writer_component.writer_class import Writer
 
@@ -25,3 +29,25 @@ class testWriter(unittest.TestCase):
         self.assertRaises(Exception, writer.data_input_format(3, -9000))
         
         writer.close_socket()
+        
+    def test_connect_socket_wrong_params(self):        
+        writer = Writer('tttt', 8081)
+        self.assertRaises(TypeError, writer.connect_socket())
+        writer.close_socket()
+        writer = Writer('localhost', '8081')
+        self.assertRaises(TypeError, writer.connect_socket())
+        writer.close_socket()
+    
+    """###
+    def test_sent(self):
+        writer = Writer('localhost', 8081)
+        connection = Mock()
+        self.assertAlmostEqual(writer.send("poruka", connection), (connection.recv.return_value,True))
+        connection.recv.return_value = None
+        self.assertAlmostEqual(writer.send("poruka", connection), ('Nema odgovora', False))
+        writer.close_socket()
+    """
+        
+if __name__ == "__main__":
+    unittest.main()
+        
