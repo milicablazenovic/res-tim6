@@ -84,6 +84,40 @@ class testLoadBalancer(unittest.TestCase):
 
         loadbalancer.close_sockets()
 
+    #test receive_data()
+    def test_receive_data(self):
+        loadbalancer = LoadBalancer('localhost', 8001, 'localhost', 8002)
+
+        data = "15:32:00 06/19/22 - 68 : 533"
+        self.assertEqual(loadbalancer.receive_data(data, 'buffer_test.txt'), 'Uspesno upisan podatak u fajl!')
+        os.remove('buffer_test.txt')
+
+        loadbalancer.close_sockets()
+
+    def test_dont_receive_empty_string(self):
+        loadbalancer = LoadBalancer('localhost', 8001, 'localhost', 8002)
+
+        data = ""
+        self.assertEqual(loadbalancer.receive_data(data, 'buffer_test.txt'), 'Greska, podatak ne moze biti prazan string!')
+
+        loadbalancer.close_sockets()
+
+    def test_dont_receive_bool_data(self):
+        loadbalancer = LoadBalancer('localhost', 8081, 'localhost', 8082)
+
+        data= False
+        self.assertEqual(loadbalancer.receive_data(data, 'buffer_test.txt'), 'Greska, neodgovarajuci tip!')
+
+        loadbalancer.close_sockets()
+
+    def test_dont_receive_int_data(self):
+        loadbalancer = LoadBalancer('localhost', 8081, 'localhost', 8082)
+
+        data = 1
+        self.assertEqual(loadbalancer.receive_data(data, 'buffer_test.txt'), 'Greska, neodgovarajuci tip!')
+
+        loadbalancer.close_sockets()
+
     # delete_data()
     # def test_delete_data(self):
     #     loadbalancer = LoadBalancer('localhost', 8081, 'localhost', 8082)
