@@ -1,10 +1,13 @@
+from errno import ERANGE
 from fileinput import filename
+import os
 import pickle
 from pkgutil import get_data
 from re import I, T
 import select
 import socket
 from _thread import *
+import time
 from zoneinfo import available_timezones
 
 # Konstanta za buffer
@@ -46,8 +49,7 @@ class LoadBalancer:
                     available_workers.append(strip_line)
                     
         return available_workers
-            
-    
+                
     def start(self):
         try:
             self.socket.bind((self.host, self.port))  
@@ -86,21 +88,26 @@ class LoadBalancer:
                     break
                 except Exception as e:
                     pass
-            if (num_lines) == 10:                
+            if (num_lines) >= 10:                
                 # prikupi podatke
-                line_array = []
-                try:
-                    f = open("buffer.txt", "r")
-                    for line in f:
-                        line_array.append(line)
-                except Exception as e:
-                    print(e)
+                n = 10
+                nfirstlines = []
 
+                with open("buffer.txt") as f, open("buffer_tmp.txt", "w") as out:
+                    for x in range(n):
+                        nfirstlines.append(next(f))
+                    
+                    for line in f:
+                        out.write(line)
+
+                os.remove("buffer.txt")
+                os.rename("buffer_tmp.txt", "buffer.txt")
+                
                 dictionary = {}
                 list_of_dictionaries = []
-                self.parse_data(list_of_dictionaries, line_array) # parisaranje za slanje
+                self.parse_data(list_of_dictionaries, nfirstlines) # parisaranje za slanje
                 self.forward_data(list_of_dictionaries, worker_socket) # slanje workeru
-                self.delete_data('buffer.txt') # brisanje podataka iz .txt
+                # self.delete_data('buffer.txt') # brisanje podataka iz .txt
 
     # WRITERS
     def accept_connections(self, socket, read_list):
@@ -108,9 +115,9 @@ class LoadBalancer:
         read_list.append(writer_socket)
         print('Konekcija: ' + str(address) + ' na port 8081')
 
-        start_new_thread(self.writer_handler, (writer_socket, ))
+        start_new_thread(self.writer_handler, (writer_socket, read_list ))
 
-    def writer_handler(self, writer_socket):
+    def writer_handler(self, writer_socket, read_list):
         while True:
             try:
                 # primi podatak od writera:
@@ -118,6 +125,7 @@ class LoadBalancer:
 
                 # ukoliko je taj podatak 'end' -> prekidam konekciju i sa strane load balancera
                 if (data == 'end'):
+                    print('Writer se otkacio!')
                     break
                 # ukoliko je izabrano paljenje/gasenje workera load balancer salje writeru listu upaljenih workera
                 if(data.lower() == 'off'):
@@ -135,6 +143,7 @@ class LoadBalancer:
                 print('Greska: ' + str(e))
                 break
         
+        read_list.remove(writer_socket)
         writer_socket.close()
         print('Zavrsena konekcija.')
 
@@ -179,22 +188,22 @@ class LoadBalancer:
             print('Poslato Workeru!')
             return True
         except Exception as e:
-            print('Greska! ' + e)
+            print(f'Greska! {e}')
             return False
     
-    def delete_data(self, file_name):
-        try:
-            fin = open(file_name, 'r')
-            data = fin.read().splitlines(True)
-            fin.close()
+    # def delete_data(self, file_name):
+    #     try:
+    #         fin = open(file_name, 'r')
+    #         data = fin.read().splitlines(True)
+    #         fin.close()
 
-            fout = open(file_name, 'w')
-            fout.writelines(data[10:])
-            fout.close()
+    #         fout = open(file_name, 'w')
+    #         fout.writelines(data[10:])
+    #         fout.close()
             
-            return 'Uspesno obrisani podaci iz datoteke!'       
-        except Exception as e:
-            print(f'Greska pri brisanju podataka! {e}')
+    #         return 'Uspesno obrisani podaci iz datoteke!'       
+    #     except Exception as e:
+    #         print(f'Greska pri brisanju podataka! {e}')
 
     def close_sockets(self):
         self.socket.close()
