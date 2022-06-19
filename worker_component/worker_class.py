@@ -19,21 +19,26 @@ class Worker:
             print('Uspesna konekcija.\n')            
             while True:
                 # prihvatamo podatke od LB
-                self.recieve_data()                          
+                self.recieve_data(self.lb_socket)                          
         except socket.error as e:
             print('Greska u komunikaciji sa load balancerom. ' + str(e))
         finally:
-            self.socket.close()
+            self.close_socket()
             print('Zavrsena konekcija.\n') 
 
-    def recieve_data(self):
+    def recieve_data(self, socket):
         try:
-            data, addr = self.lb_socket.recvfrom(1024)
+            data, addr = socket.recvfrom(1024)
             unpickled_list_of_dictionaries = pickle.loads(data)
             print(unpickled_list_of_dictionaries)
             self.save_data(unpickled_list_of_dictionaries)
         except Exception as e:
             print(e)
+
+
+    def load_data(self, data):
+        unpickled_list_of_dictionaries = pickle.loads(data)
+        return unpickled_list_of_dictionaries
 
     def save_data(self, data):
         # podaci koje dolaze su dictionary
@@ -74,5 +79,8 @@ class Worker:
                     cursor.execute(query)
                     databaseCRUD.connection.commit()
                     print("Uspesno upisana vrednost.")
+
+    def close_socket(self):
+        self.lb_socket.close()
             
         
