@@ -29,7 +29,7 @@ class Worker:
     def recieve_data(self, socket):
         try:
             data, addr = socket.recvfrom(1024)
-            unpickled_list_of_dictionaries = pickle.loads(data)
+            unpickled_list_of_dictionaries = self.load_data(data)
             print(unpickled_list_of_dictionaries)
             self.save_data(unpickled_list_of_dictionaries)
         except Exception as e:
@@ -75,7 +75,6 @@ class Worker:
                     
                     query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
                             values ('{str(kljuc)}', '{str(vrednost)}', '{str(nextMonth)}')"""
-                    print(query)
                     cursor.execute(query)
                     databaseCRUD.connection.commit()
                     print("Uspesno upisana vrednost.")

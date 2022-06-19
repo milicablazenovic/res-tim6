@@ -111,7 +111,7 @@ class Writer:
         """
         try:
             id = int(id)
-            value = float(value)
+            value = int(value)
             dt = datetime.now()
             time_stamp = dt.strftime('%X %x')
             return time_stamp + ' - ' + str(id) + ' : ' + str(value)

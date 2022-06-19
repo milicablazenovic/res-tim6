@@ -11,8 +11,7 @@ from database.Brojilo import Brojilo
 class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):
         global cursor, conn
-        #conn = db_connect("baza_res", "res", "localhost/xe")
-        conn = db_connect("PR1362018", "ftn", "localhost/xe")
+        conn = db_connect("baza_test", "test", "localhost/xe")
         cursor = conn.cursor()
         
         create_table(conn)
