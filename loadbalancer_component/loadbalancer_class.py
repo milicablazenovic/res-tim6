@@ -138,20 +138,27 @@ class LoadBalancer:
                 writer_socket.send('Uspesno poslata poruka na server.'.encode())
 
                 # upisi ga u datoteku:                
-                self.receive_data(data)
+                self.receive_data(data, 'buffer.txt')
             except socket.error as e:
                 print('Greska: ' + str(e))
                 break
-        
-        read_list.remove(writer_socket)
+
         writer_socket.close()
         print('Zavrsena konekcija.')
+ 
 
-    def receive_data(self, data):        
+    def receive_data(self, data, filename):  
+        if(type(data) is not str):
+            return 'Greska, neodgovarajuci tip!' 
+
+        if(data == ""):
+            return 'Greska, podatak ne moze biti prazan string!' 
+
         try:
-            buffer = open('buffer.txt', 'a')
+            buffer = open(filename, 'a')
             buffer.write(data + '\n')
             buffer.close()
+            return 'Uspesno upisan podatak u fajl!'
         except OSError:
             print('Neuspesno otvaranje fajla!')
             exit()
