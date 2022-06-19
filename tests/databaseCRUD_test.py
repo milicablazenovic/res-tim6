@@ -129,7 +129,7 @@ class testdatabaseCRUD(unittest.TestCase):
         
     def testUpdateUser(self):
         # azuriranje nepostojeceg brojila u sistemu
-        self.assertAlmostEqual(updateUser(2, "pera", "peric", "gradska", 28, "31000", "Uzice"), "Brojilo ne postoji u sistemu")
+        self.assertEqual(updateUser(2, "pera", "peric", "gradska", 28, "31000", "Uzice"), "Brojilo ne postoji u sistemu")
         
         # azuriranje postojecih brojila u sistemu
         cursor.execute("insert into brojilo values (auto_inc.nextval, 'pera', 'peric', 'gradska', 28, 31000, 'Uzice')")
