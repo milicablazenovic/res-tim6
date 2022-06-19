@@ -1,3 +1,4 @@
+from fileinput import filename
 import pickle
 from pkgutil import get_data
 from re import I, T
@@ -99,7 +100,7 @@ class LoadBalancer:
                 list_of_dictionaries = []
                 self.parse_data(list_of_dictionaries, line_array) # parisaranje za slanje
                 self.forward_data(list_of_dictionaries, worker_socket) # slanje workeru
-                self.delete_data() # brisanje podataka iz .txt
+                self.delete_data('buffer.txt') # brisanje podataka iz .txt
 
     # WRITERS
     def accept_connections(self, socket, read_list):
@@ -154,6 +155,9 @@ class LoadBalancer:
             value = int(line_pieces[5])
 
             list_of_dictionaries.append({id:value})
+        
+        if (len(list_of_dictionaries) == 10):
+            return 'Uspesno parsirani podaci!'
 
     def forward_data(self, list_of_dictionaries, worker_socket):
         # postoji zbog testova
@@ -178,12 +182,19 @@ class LoadBalancer:
             print('Greska! ' + e)
             return False
     
-    def delete_data(self):
-        fin = open('buffer.txt', 'r')
-        data = fin.read().splitlines(True)
+    def delete_data(self, file_name):
+        try:
+            fin = open(file_name, 'r')
+            data = fin.read().splitlines(True)
+            fin.close()
 
-        fout = open('buffer.txt', 'w')
-        fout.writelines(data[10:])   
+            fout = open(file_name, 'w')
+            fout.writelines(data[10:])
+            fout.close()
+            
+            return 'Uspesno obrisani podaci iz datoteke!'       
+        except Exception as e:
+            print(f'Greska pri brisanju podataka! {e}')
 
     def close_sockets(self):
         self.socket.close()
