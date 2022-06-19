@@ -12,6 +12,7 @@ class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):
         global cursor, conn
         conn = db_connect("baza_test", "test", "localhost/xe")
+        #conn = db_connect("PR1362018", "ftn", "localhost/xe")
         cursor = conn.cursor()
         
         create_table(conn)
@@ -20,11 +21,11 @@ class testdatabaseCRUD(unittest.TestCase):
     def test_db_connect(self, mock_sql):
         self.assertIs(databaseCRUD.cx_Oracle, mock_sql)
 
-        db_connect("PR1362018", "ftn", "localhost/xe")
-        mock_sql.connect.assert_called_with("PR1362018", "ftn", "localhost/xe")
+        #db_connect("PR1362018", "ftn", "localhost/xe")
+        #mock_sql.connect.assert_called_with("PR1362018", "ftn", "localhost/xe")
 
-        #db_connect("baza_res", "res", "localhost/xe")
-        #mock_sql.connect.assert_called_with("baza_res", "res", "localhost/xe")
+        db_connect("baza_test", "test", "localhost/xe")
+        mock_sql.connect.assert_called_with("baza_test", "test", "localhost/xe")
 
     def test_db_connect_input(self):
 
