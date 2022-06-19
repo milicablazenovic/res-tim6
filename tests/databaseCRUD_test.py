@@ -2,7 +2,7 @@ import cx_Oracle
 import sys
 sys.path.append('../')
 import database.databaseCRUD as databaseCRUD
-from database.databaseCRUD import create_table, readUsers, db_connect, deleteUser
+from database.databaseCRUD import create_table, readUsers, db_connect, deleteUser, updateUser
 import unittest, unittest.mock
 from unittest.mock import Mock, patch, MagicMock 
 from database.Brojilo import Brojilo
@@ -122,6 +122,22 @@ class testdatabaseCRUD(unittest.TestCase):
         result = cursor.fetchall()
 
         self.assertEqual(result, [('BROJILO',), ('POTROSNJA',)])
+        
+    def testUpdateUser(self):
+        # azuriranje nepostojeceg brojila u sistemu
+        self.assertAlmostEqual(updateUser(2, "pera", "peric", "gradska", 28, "31000", "Uzice"), "Brojilo ne postoji u sistemu")
+        
+        # azuriranje postojecih brojila u sistemu
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'pera', 'peric', 'gradska', 28, 31000, 'Uzice')")
+        cursor.execute("insert into brojilo values (auto_inc.nextval, 'misa', 'misic', 'jevrejska', 15, 21000, 'Novi Sad')")
+        conn.commit()
+        self.assertEqual(updateUser(1, "pera", "peric", "gradska", 28, 31000, "Uzice"), "Uspesno ste izmenili korisnika")
+        
+        # nevalindi parametri
+        self.assertRaises(Exception, updateUser("test", "pera", "peric", "gradska", 28, 31000, "Uzice"))
+        self.assertRaises(Exception, updateUser(2, "pera", "peric", "gradska", "28", "31000", "Uzice"))
+        self.assertRaises(Exception, updateUser(2, 22, 111, 333, 28, 31000, 234))
+
 
     def test_deleteUser(self):
         #test da li baca error kada pokusa da se obrise nepostojeci Id
