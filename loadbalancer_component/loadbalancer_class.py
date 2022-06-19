@@ -136,7 +136,6 @@ class LoadBalancer:
             except socket.error as e:
                 print('Greska: ' + str(e))
                 break
-<<<<<<< HEAD
 
         writer_socket.close()
         print('Zavrsena konekcija.')
@@ -148,12 +147,6 @@ class LoadBalancer:
 
         if(data == ""):
             return 'Greska, podatak ne moze biti prazan string!' 
-=======
-        
-        read_list.remove(writer_socket)
-        self.close_socket(writer_socket)
-        print('Zavrsena konekcija.')    
->>>>>>> b6248296a204fb1799a9252e7aa066d4c7e219a1
 
         try:
             buffer = open(filename, 'a')
