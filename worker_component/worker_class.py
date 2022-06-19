@@ -3,7 +3,7 @@ from random import randint
 import sys
 import socket
 sys.path.append('../')
-import database.databaseCRUD as databaseCRUD
+from database.databaseCRUD import find_id, find_month, update_value, db_connect
 import database.months as months
 
 
@@ -30,7 +30,7 @@ class Worker:
         try:
             data, addr = socket.recvfrom(1024)
             unpickled_list_of_dictionaries = self.load_data(data)
-            conn = databaseCRUD.db_connect("baza_res", "res", "localhost/xe")
+            conn = db_connect("baza_res", "res", "localhost/xe")
             self.save_data(unpickled_list_of_dictionaries, conn)
         except Exception as e:
             print(e)
@@ -53,31 +53,22 @@ class Worker:
             kljuc = dict[0]
             vrednost = dict[1]
 
-            # key je id a vrednost data[key]
-            count = 0
             month = 0
             # provera da li prosledjeni id postoji
-            cursor.execute("select * from brojilo where idbrojila="+ str(kljuc))
-            for item in cursor:
-                count +=1 
+            count = find_id(kljuc, conn) 
             if count == 0:
                 continue # necemo upisati taj podatak
             else:
                 # provera koji je sledeci mesec za koji se upisuje vrednost
-                cursor.execute("select * from potrosnja where idbrojila="+ str(kljuc))
-                for item in cursor:
-                    month += 1
+                month = find_month(kljuc, conn)
 
                 if month == 12:
                     continue
                 else:
                     nextMonth = month + 1
                     
-                    query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
-                            values ('{str(kljuc)}', '{str(vrednost)}', '{str(nextMonth)}')"""
-                    cursor.execute(query)
-                    databaseCRUD.connection.commit()
-                    print("Uspesno upisana vrednost.")
+                    update_value(kljuc, vrednost, nextMonth, conn)
+                    
                     upisani.append({kljuc:vrednost})
         return upisani
 

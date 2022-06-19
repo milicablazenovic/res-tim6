@@ -1,4 +1,5 @@
 from asyncio import constants
+from itertools import count
 from multiprocessing.sharedctypes import Value
 import string
 import cx_Oracle
@@ -130,4 +131,30 @@ def updateUser(id, ime, prezime, ulica, broj, postbroj, grad):
             return "Brojilo ne postoji u sistemu"
     except Exception as e:
         print(e)
+
+def find_id(id, conn):
+    cursor = conn.cursor()
+    count = 0
+    cursor.execute("select * from brojilo where idbrojila="+ str(id))
+    for item in cursor:
+        count +=1 
+    return count
+
+def find_month(id, conn):
+    cursor = conn.cursor()
+    month = 0
+    cursor.execute("select * from potrosnja where idbrojila="+ str(id))
+    for item in cursor:
+        month += 1
+
+    return month
+
+def update_value(id, value, month, conn):
+    cursor = conn.cursor()
+    query = f"""insert into potrosnja (idbrojila, potrosnja, mesec)
+                values ('{str(id)}', '{str(value)}', '{str(month)}')"""
+    cursor.execute(query)
+    conn.commit()
+    print("Uspesno upisana vrednost.")
+
     
