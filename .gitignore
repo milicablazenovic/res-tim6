@@ -3,3 +3,5 @@ worker_component/__pycache__
 tests/__pycache__
 writer_component/__pycache__
 loadbalancer_component/__pycache__
+buffer.txt
+buffer_test.txt
