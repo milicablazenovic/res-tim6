@@ -90,9 +90,8 @@ def deleteUser(idZaBrisanje):
         print(result)
         return result
 
-def createUser():
-    brojilo = Brojilo()
-    brojilo.createUser()
+def createUser(brojilo):
+    brojilo.create_brojilo()
     
 def updateUser(id, ime, prezime, ulica, broj, postbroj, grad):
     try:

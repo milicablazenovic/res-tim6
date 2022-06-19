@@ -1,5 +1,6 @@
 from threading import BrokenBarrierError
 import database.databaseCRUD as databaseCRUD 
+from database.Brojilo import Brojilo
 
 global case
 case=10       
@@ -15,7 +16,20 @@ while case != 5:
     global data_update            
         
     if case == 1:
-        databaseCRUD.createUser()
+        print("Unesite ime: ")
+        ime = input()
+        print("Unesite prezime: ")
+        prezime = input()
+        print("Unesite ulicu: ")
+        ulica = input()
+        print("Unesite broj: ")
+        broj = input()
+        print("Unesite postanski broj: ")
+        post_broj = input()
+        print("Unesite grad: ")
+        grad = input()
+        ret_val = databaseCRUD.createUser(Brojilo(ime, prezime, ulica, broj, post_broj, grad))
+        print(ret_val)
 
     elif case == 2:
         databaseCRUD.readUsers()
@@ -38,7 +52,7 @@ while case != 5:
             post_broj = input()
             print("Unesite novi grad: ")
             grad = input()
-            databaseCRUD.updateUser(idZaBrisanje, ime, prezime, ulica, broj, post_broj, grad)
+            databaseCRUD.updateUser(int(idZaBrisanje), ime, prezime, ulica, broj, post_broj, grad)
         
     elif case == 4:
         print("Unesite id brojila za brisanje:")

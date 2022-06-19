@@ -11,80 +11,19 @@ class Brojilo:
     postanski_broj = ""
     grad = ""
 
-    def createUser(self):
-        if(len(self.ime) == 0):
-            print("Unesi ime")
-            self.ime = input()
-            self.createUser()
-            return
-
-        if(len(self.prezime) == 0):
-            print("Unesi prezime")
-            self.prezime = input()
-            self.createUser()
-            return
-
-        if(len(self.ulica) == 0):
-            print('Unesi ulicu')
-            self.ulica = input()
-            self.createUser()
-            return
-
-        if(len(self.broj) == 0):
-            self.createUser()
-            return
+    def __init__(self, ime, prez, ul, br, po_br, grad):
+        self.ime = ime
+        self.prezime = prez
+        self.ulica  = ul
+        self.broj = br
+        self.postanski_broj = po_br
+        self.grad = grad
         
-        if (isinstance(self.postanski_broj, str) == True and len(self.postanski_broj) == 0):
-            print('Upisite postanski broj:')
-            self.postanski_broj = input()
-            self.createUser()
-            return
-
-        if(isinstance(self.postanski_broj, str) == True and len(self.postanski_broj) > 0):
-            try:
-                self.postanski_broj = int(self.postanski_broj)
-            except Exception as e:
-                print('Neispravan postanski broj, upisite ispravan:')
-                self.postanski_broj = input()
-                self.createUser()
-                return
-            self.createUser()
-            return
-
-        if(len(self.grad) == 0):
-            print('Unesi grad')
-            self.grad = input()
-            self.createUser()
-            return
-
-        self.save_user_to_db()
-
-    def save_user_to_db(self):
-        if (self.ime == ''):
-            return ('Niste upisali ime!')
-
-        if (self.prezime == ''):
-            return ('Niste upisali prezime!')
-
-        if (self.ulica == ''):
-            return ('Niste upisali ulicu!')
-
-        if (self.broj == ''):
-            return ('Niste upisali broj!')
-
-        if (self.postanski_broj == ''):
-            return ('Niste upisali postanski broj!')
-
-        if (isinstance(self.postanski_broj, int) == False):
-            return ('Niste upisali validan postanski broj!')
-
-        if (self.grad == ''):
-            return ('Niste upisali grad!')
-        
+    def create_brojilo(self):
         try:
             cursor = connection.cursor()
-            cursor.execute("insert into brojilo (ime, prezime, ulica, broj, postbroj, grad)" + 
-            " values ('" + self.ime + "','" + self.prezime + "','" + self.ulica + "','" + self.broj + "','" + str(self.postanski_broj) + "','" + self.grad + "')")
+            cursor.execute("insert into brojilo (idbrojila, ime, prezime, ulica, broj, postbroj, grad)" + 
+            " values (auto_inc.nextval, '" + self.ime + "','" + self.prezime + "','" + self.ulica + "','" + self.broj + "','" + str(self.postanski_broj) + "','" + self.grad + "')")
 
             connection.commit()
             return 'Uspesno sacuvan korisnik u bazi!'
