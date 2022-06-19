@@ -1,4 +1,6 @@
+
 from multiprocessing.sharedctypes import Value
+from weakref import KeyedRef
 import cx_Oracle
 import sys
 sys.path.append('../')
@@ -11,8 +13,8 @@ from database.Brojilo import Brojilo
 class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):
         global cursor, conn
-        conn = db_connect("baza_test", "test", "localhost/xe")
-        #conn = db_connect("PR1362018", "ftn", "localhost/xe")
+        #conn = db_connect("baza_test", "test", "localhost/xe")
+        conn = db_connect("PR1362018", "ftn", "localhost/xe")
         cursor = conn.cursor()
         
         create_table(conn)
@@ -41,58 +43,22 @@ class testdatabaseCRUD(unittest.TestCase):
         self.assertRaises(cx_Oracle.DatabaseError)
 
     # Create ->
-    def kreirajBrojilo(self): 
-        brojilo = Brojilo()
-        brojilo.ime = 'Ime'
-        brojilo.prezime = 'Prezime'
-        brojilo.ulica = 'Ulica'
-        brojilo.broj = 'Broj'
-        brojilo.postanski_broj = 1
-        brojilo.grad = 'Grad'
+    def kreirajBrojilo_param(self, ime, prez, ul, br, po_br, grad): 
+        brojilo = Brojilo('test_ime', 'test_prez', 'test_ul', 'test_br', 'test_po_br', 'test_grad' )
+        brojilo = Brojilo(ime, prez, ul, br, po_br, grad)
+        return brojilo
+    
+    def kreirajBrojilo(self):
+        brojilo = Brojilo('test_ime', 'test_prez', 'test_ul', 'test_br', 'test_po_br', 'test_grad' )        
         return brojilo
 
-    def test_save_user_to_db_if_first_name_is_empty(self):
+    def test_createUser(self):
         brojilo = self.kreirajBrojilo()
-        brojilo.ime = ''
-        rezultat = brojilo.save_user_to_db()
-        self.assertEqual(rezultat, 'Niste upisali ime!')
-
-    def test_save_user_to_db_if_last_name_is_empty(self):
-        brojilo = self.kreirajBrojilo()
-        brojilo.prezime = ''
-        rezultat = brojilo.save_user_to_db()
-        self.assertEqual(rezultat, 'Niste upisali prezime!')
-
-    def test_save_user_to_db_if_street_is_empty(self):
-        brojilo = self.kreirajBrojilo()
-        brojilo.ulica = ''
-        rezultat = brojilo.save_user_to_db()
-        self.assertEqual(rezultat, 'Niste upisali ulicu!')
-
-    def test_save_user_to_db_if_number_is_empty(self):
-        brojilo = self.kreirajBrojilo()
-        brojilo.broj = ''
-        rezultat = brojilo.save_user_to_db()
-        self.assertEqual(rezultat, 'Niste upisali broj!')
-
-    def test_save_user_to_db_if_postal_code_is_empty(self):
-        brojilo = self.kreirajBrojilo()
-        brojilo.postanski_broj = ''
-        rezultat = brojilo.save_user_to_db()
-        self.assertEqual(rezultat, 'Niste upisali postanski broj!')
-
-    def test_save_user_to_db_if_city_is_empty(self):
-        brojilo = self.kreirajBrojilo()
-        brojilo.grad = ''
-        rezultat = brojilo.save_user_to_db()
-        self.assertEqual(rezultat, 'Niste upisali grad!')
-
-    def test_save_user_to_db_if_postal_code_is_text(self):
-        brojilo = self.kreirajBrojilo()
-        brojilo.postanski_broj = '9198984'
-        rezultat = brojilo.save_user_to_db()
-        self.assertEqual(rezultat, 'Niste upisali validan postanski broj!')
-    # <- Create
+        ret_val = brojilo.create_brojilo()
+        self.assertRaises(Exception, ret_val)
+        
+        brojilo = self.kreirajBrojilo_param('', '', '', '', '', '')
+        self.assertRaises(Exception, brojilo.create_brojilo())   
 
     def test_readUsers(self):
         # test kada nema redova u tabeli
