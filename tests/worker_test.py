@@ -1,4 +1,5 @@
 from os import curdir
+import socket
 import sys
 import unittest
 import pickle
@@ -24,6 +25,12 @@ class testWorker(unittest.TestCase):
         pickle.loads.assert_called()
         worker.close_socket()
     
+
+    def test_start(self):
+        worker = Worker("asdf", 8082)
+        self.assertRaises(TypeError, worker.start())
+        worker.close_socket()
+
     def test_save_data(self):
         worker = Worker('localhost', 8082)
 
