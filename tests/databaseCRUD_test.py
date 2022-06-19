@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 import cx_Oracle
 import sys
 sys.path.append('../')
@@ -10,7 +11,8 @@ from database.Brojilo import Brojilo
 class testdatabaseCRUD(unittest.TestCase):
     def setUp(self):
         global cursor, conn
-        conn = db_connect("baza_res", "res", "localhost/xe")
+        conn = db_connect("baza_test", "test", "localhost/xe")
+        #conn = db_connect("PR1362018", "ftn", "localhost/xe")
         cursor = conn.cursor()
         
         create_table(conn)
@@ -19,8 +21,11 @@ class testdatabaseCRUD(unittest.TestCase):
     def test_db_connect(self, mock_sql):
         self.assertIs(databaseCRUD.cx_Oracle, mock_sql)
 
-        db_connect("baza_res", "res", "localhost/xe")
-        mock_sql.connect.assert_called_with("baza_res", "res", "localhost/xe")
+        #db_connect("PR1362018", "ftn", "localhost/xe")
+        #mock_sql.connect.assert_called_with("PR1362018", "ftn", "localhost/xe")
+
+        db_connect("baza_test", "test", "localhost/xe")
+        mock_sql.connect.assert_called_with("baza_test", "test", "localhost/xe")
 
     def test_db_connect_input(self):
 
@@ -125,7 +130,7 @@ class testdatabaseCRUD(unittest.TestCase):
         
     def testUpdateUser(self):
         # azuriranje nepostojeceg brojila u sistemu
-        self.assertAlmostEqual(updateUser(2, "pera", "peric", "gradska", 28, "31000", "Uzice"), "Brojilo ne postoji u sistemu")
+        self.assertRaises(Exception, updateUser(2, "pera", "peric", "gradska", 28, "31000", "Uzice"))
         
         # azuriranje postojecih brojila u sistemu
         cursor.execute("insert into brojilo values (auto_inc.nextval, 'pera', 'peric', 'gradska', 28, 31000, 'Uzice')")
@@ -161,3 +166,6 @@ class testdatabaseCRUD(unittest.TestCase):
         cursor.execute("drop sequence auto_inc")
         conn.commit()
         conn.close()
+        
+if __name__ == "__main__":
+    unittest.main()

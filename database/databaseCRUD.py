@@ -1,4 +1,5 @@
 from asyncio import constants
+from multiprocessing.sharedctypes import Value
 import string
 import cx_Oracle
 from database.Brojilo import Brojilo
@@ -93,34 +94,40 @@ def createUser():
     brojilo.createUser()
     
 def updateUser(id, ime, prezime, ulica, broj, postbroj, grad):
-    if(type(id) != int):
-        raise Exception('Id brojila mora da bude broj!')
+    try:
+        if((type(id) != int)):
+            raise Exception('Id brojila mora da bude broj!')
+        
+        if(type(broj) != int and type(broj) != str):
+            raise Exception('Broj moze biti u formatu "123" ili "42a"')
+        
+        #if(type(ime) != str or type(prezime) != str or type(ulica) != str or type(grad) != str):
+        #   raise Exception('Nazivi moraju biti stringovi.')
+        
+        result = all(isinstance(item, int) for item in [id, ime, prezime, ulica, broj, postbroj, grad])
+        if result:
+            raise Exception('Ime, prezime, ulica, grad moraju biti stringovi.')
     
-    if(type(broj) != int or type(postbroj) != int):
-        raise Exception('Pogresan unos prostanskog broja i broja.')
+        
     
-    #if(type(ime) != str or type(prezime) != str or type(ulica) != str or type(grad) != str):
-    #   raise Exception('Nazivi moraju biti stringovi.')
+        cursor = connection.cursor()
+        
+        
+        cursor.execute("select * from brojilo where idbrojila="+str(id))
+        row = cursor.fetchone()
+        if row:    
+            cursor.execute("UPDATE brojilo SET ime ='"
+                            + str(ime) + "', prezime ='"
+                            + str(prezime) + "', ulica ='"
+                            + str(ulica) + "', broj = "
+                            + str(broj) + ", postbroj = "
+                            + str(postbroj) + ", grad ='"
+                            + str(grad) + "' WHERE idbrojila = " 
+                            + str(id))
+            connection.commit()
+            return "Uspesno ste izmenili korisnika"
+        else:
+            return "Brojilo ne postoji u sistemu"
+    except Exception as e:
+        print(e)
     
-    result = all(isinstance(item, int) for item in [id, ime, prezime, ulica, broj, postbroj, grad])
-    if result:
-        raise Exception('Ime, prezime, ulica, grad moraju biti stringovi.')
-    
-    cursor = connection.cursor()
-    
-    
-    cursor.execute("select * from brojilo where idbrojila="+str(id))
-    row = cursor.fetchone()
-    if row:    
-        cursor.execute("UPDATE brojilo SET ime ='"
-                        + ime + "', prezime ='"
-                        + prezime + "', ulica ='"
-                        + ulica + "', broj = "
-                        + broj + ", postbroj = "
-                        + postbroj + ", grad ='"
-                        + grad + "' WHERE idbrojila = " 
-                        + str(id))
-        connection.commit()
-        return "Uspesno ste izmenili korisnika"
-    else:
-        return "Brojilo ne postoji u sistemu"
