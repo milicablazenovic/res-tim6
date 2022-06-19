@@ -1,5 +1,4 @@
 from datetime import datetime
-from multiprocessing.sharedctypes import Value
 import sys
 import unittest
 sys.path.append('../')
@@ -25,3 +24,6 @@ class testWriter(unittest.TestCase):
         self.assertRaises(Exception, writer.data_input_format(3, -9000))
         
         writer.close_socket()
+
+if __name__ == "__main__":
+    unittest.main()

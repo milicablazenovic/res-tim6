@@ -125,14 +125,11 @@ class Writer:
             string: Podatak za slanje u vidu stringa 'vreme - id_brojila : trenutna_vrednost'
         """
         try:
-            if type(id) != int:
-                raise Exception("Greska! Id mora biti ceo broj.")
-            if type(value) == str:
-                raise Exception("Greska! Vrednost mora biti broj.")
+            id = int(id)
+            value = int(value)
             if id < 0 or value < 0:
                 raise Exception("Greska! Id i vrednost ne smeju biti negativni.")
             else:
-                id = int(id)
                 value = int(value)
                 dt = datetime.now()
                 time_stamp = dt.strftime('%X %x')

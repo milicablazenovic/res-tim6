@@ -118,6 +118,9 @@ class testLoadBalancer(unittest.TestCase):
 
         loadbalancer.close_sockets()
 
+if __name__ == "__main__":
+    unittest.main()
+
     # delete_data()
     # def test_delete_data(self):
     #     loadbalancer = LoadBalancer('localhost', 8081, 'localhost', 8082)

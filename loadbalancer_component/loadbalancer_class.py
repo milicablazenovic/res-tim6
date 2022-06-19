@@ -1,14 +1,10 @@
-from errno import ERANGE
 from fileinput import filename
 import os
 import pickle
-from pkgutil import get_data
-from re import I, T
 import select
 import socket
 from _thread import *
-import time
-from zoneinfo import available_timezones
+
 
 # Konstanta za buffer
 BUFFER_SIZE = 1024
