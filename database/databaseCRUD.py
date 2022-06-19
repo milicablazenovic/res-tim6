@@ -96,8 +96,8 @@ def updateUser(id, ime, prezime, ulica, broj, postbroj, grad):
     if(type(id) != int):
         raise Exception('Id brojila mora da bude broj!')
     
-    if(type(broj) != int or type(postbroj) != int):
-        raise Exception('Pogresan unos prostanskog broja i broja.')
+    if(type(broj) != int or type(broj) != str):
+        raise Exception('Broj moze biti u formatu "123" ili "42a"')
     
     #if(type(ime) != str or type(prezime) != str or type(ulica) != str or type(grad) != str):
     #   raise Exception('Nazivi moraju biti stringovi.')
