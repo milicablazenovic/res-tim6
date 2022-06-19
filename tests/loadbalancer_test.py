@@ -5,7 +5,6 @@ import unittest
 import random
 from unittest.mock import Mock
 import sys
-sys.path.insert(1, r'C:\Users\miljc\OneDrive\Desktop\res-tim6')
 from loadbalancer_component.loadbalancer_class import LoadBalancer
 
 class testLoadBalancer(unittest.TestCase):
@@ -84,7 +83,7 @@ class testLoadBalancer(unittest.TestCase):
 
         loadbalancer.close_sockets()
 
-    #test receive_data()
+    # receive_data()
     def test_receive_data(self):
         loadbalancer = LoadBalancer('localhost', 8001, 'localhost', 8002)
 
@@ -120,17 +119,3 @@ class testLoadBalancer(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-    # delete_data()
-    # def test_delete_data(self):
-    #     loadbalancer = LoadBalancer('localhost', 8081, 'localhost', 8082)
-
-    #     buffer = open('buffer_test.txt', 'a')
-    #     for i in range(10):
-    #         buffer.write(f'14:14:13 06/19/22 - {i+1} : 6688' + '\n')
-    #     buffer.close()
-
-    #     self.assertEqual(loadbalancer.delete_data('buffer_test.txt'), 'Uspesno obrisani podaci iz datoteke!')
-
-    #     os.remove('buffer_test.txt')
-    #     loadbalancer.close_sockets()

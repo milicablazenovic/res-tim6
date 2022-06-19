@@ -5,8 +5,7 @@ import select
 import socket
 from _thread import *
 
-
-# Konstanta za buffer
+# konstanta za buffer
 BUFFER_SIZE = 1024
 
 class LoadBalancer:
@@ -36,7 +35,7 @@ class LoadBalancer:
                 if line in ['\n', '\r\n']:
                     junk.append(line)
                 else:
-                    strip_line = line.rstrip() #uklanja whitespaces
+                    strip_line = line.rstrip() # uklanja whitespaces
                     available_workers.append(strip_line)
                     
         return available_workers
@@ -64,6 +63,59 @@ class LoadBalancer:
                 if s is self.socket2:
                     self.accept_connections2(self.socket2, read_list)
 
+    # WRITERS
+    def accept_connections(self, socket, read_list):
+        writer_socket, address = self.socket.accept()
+        read_list.append(writer_socket)
+        print('Konekcija: ' + str(address) + ' na port 8081')
+
+        start_new_thread(self.writer_handler, (writer_socket, read_list))
+
+    def writer_handler(self, writer_socket, read_list):
+        while True:
+            try:
+                # primam podatak od writera
+                data = writer_socket.recv(1024).decode()
+
+                # ukoliko je taj podatak 'end' -> prekidam konekciju i sa strane load balancera
+                if (data == 'end'):
+                    break
+                # ukoliko je izabrano paljenje/gasenje workera load balancer salje writeru listu upaljenih workera
+                if(data.lower() == 'off'):
+                    worker_list = self.get_workers('workers_list.txt')
+                    writer_socket.sendall(worker_list)
+                elif(data.lower() == 'on'):
+                    # todo
+                    pass
+
+                writer_socket.send('Uspesno poslata poruka na server.'.encode())
+
+                # upisi ga u datoteku              
+                self.receive_data(data, 'buffer.txt')
+            except socket.error as e:
+                print('Greska: ' + str(e))
+                break
+
+        read_list.remove(writer_socket)
+        self.close_socket(writer_socket)
+        print('Zavrsena konekcija.')    
+ 
+    def receive_data(self, data, filename):  
+        if(type(data) is not str):
+            return 'Greska, neodgovarajuci tip!' 
+
+        if(data == ""):
+            return 'Greska, podatak ne moze biti prazan string!' 
+
+        try:
+            buffer = open(filename, 'a')
+            buffer.write(data + '\n')
+            buffer.close()
+            return 'Uspesno upisan podatak u fajl!'
+        except OSError:
+            print('Neuspesno otvaranje fajla!')
+            exit()
+    
     # WORKERS
     def accept_connections2(self, socket2, read_list):
         worker_socket, address2 = self.socket2.accept()
@@ -97,62 +149,9 @@ class LoadBalancer:
                 
                 dictionary = {}
                 list_of_dictionaries = []
-                self.parse_data(list_of_dictionaries, nfirstlines) # parisaranje za slanje
-                self.forward_data(list_of_dictionaries, worker_socket) # slanje workeru
+                self.parse_data(list_of_dictionaries, nfirstlines) 
+                self.forward_data(list_of_dictionaries, worker_socket)
 
-    # WRITERS
-    def accept_connections(self, socket, read_list):
-        writer_socket, address = self.socket.accept()
-        read_list.append(writer_socket)
-        print('Konekcija: ' + str(address) + ' na port 8081')
-
-        start_new_thread(self.writer_handler, (writer_socket, read_list ))
-
-    def writer_handler(self, writer_socket, read_list):
-        while True:
-            try:
-                # primi podatak od writera:
-                data = writer_socket.recv(1024).decode()
-
-                # ukoliko je taj podatak 'end' -> prekidam konekciju i sa strane load balancera
-                if (data == 'end'):
-                    break
-                # ukoliko je izabrano paljenje/gasenje workera load balancer salje writeru listu upaljenih workera
-                if(data.lower() == 'off'):
-                    worker_list = self.get_workers('workers_list.txt')
-                    writer_socket.sendall(worker_list)
-                elif(data.lower() == 'on'):
-                    #todo
-                    pass
-
-                writer_socket.send('Uspesno poslata poruka na server.'.encode())
-
-                # upisi ga u datoteku:                
-                self.receive_data(data, 'buffer.txt')
-            except socket.error as e:
-                print('Greska: ' + str(e))
-                break
-
-        read_list.remove(writer_socket)
-        self.close_socket(writer_socket)
-        print('Zavrsena konekcija.')    
- 
-    def receive_data(self, data, filename):  
-        if(type(data) is not str):
-            return 'Greska, neodgovarajuci tip!' 
-
-        if(data == ""):
-            return 'Greska, podatak ne moze biti prazan string!' 
-
-        try:
-            buffer = open(filename, 'a')
-            buffer.write(data + '\n')
-            buffer.close()
-            return 'Uspesno upisan podatak u fajl!'
-        except OSError:
-            print('Neuspesno otvaranje fajla!')
-            exit()
-    
     def parse_data(self, list_of_dictionaries, line_array):
         for line in line_array:    
             line_pieces = line.split(" ")
@@ -166,15 +165,12 @@ class LoadBalancer:
             return 'Uspesno parsirani podaci!'
 
     def forward_data(self, list_of_dictionaries, worker_socket):
-        # postoji zbog testova
         if (type(list_of_dictionaries) is not list):
             return 'Neispravna lista!'
         
-        # postoji zbog testova
         if (len(list_of_dictionaries) < 10):
             return 'Nema 10 vrednosti u listi!'
 
-        # postoji zbog testova
         for el in list_of_dictionaries:
             if (type(el) is not dict):
                 return 'Neispravni elementi u listi!'
