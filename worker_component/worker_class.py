@@ -30,8 +30,8 @@ class Worker:
         try:
             data, addr = socket.recvfrom(1024)
             unpickled_list_of_dictionaries = self.load_data(data)
-            print(unpickled_list_of_dictionaries)
-            self.save_data(unpickled_list_of_dictionaries)
+            conn = databaseCRUD.db_connect("baza_res", "res", "localhost/xe")
+            self.save_data(unpickled_list_of_dictionaries, conn)
         except Exception as e:
             print(e)
 
@@ -40,11 +40,11 @@ class Worker:
         unpickled_list_of_dictionaries = pickle.loads(data)
         return unpickled_list_of_dictionaries
 
-    def save_data(self, data):
+    def save_data(self, data, conn):
         # podaci koje dolaze su dictionary
-        
-        databaseCRUD.db_connect("baza_res", "res", "localhost/xe")
-        cursor = databaseCRUD.connection.cursor()
+        cursor = conn.cursor()
+
+        upisani = []
 
         for element in data:
             dict_pairs = element.items()
@@ -78,8 +78,11 @@ class Worker:
                     cursor.execute(query)
                     databaseCRUD.connection.commit()
                     print("Uspesno upisana vrednost.")
+                    upisani.append({kljuc:vrednost})
+        return upisani
 
     def close_socket(self):
         self.lb_socket.close()
-            
+
+
         
