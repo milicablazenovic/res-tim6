@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append('../')
 import unittest
 import random
 from unittest.mock import Mock
